@@ -1,0 +1,7 @@
+.idea/*
+._*
+.DS*
+composer.lock
+vendor/*
+cache/*
+Config/*
