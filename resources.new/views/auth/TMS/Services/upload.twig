@@ -1,0 +1,28 @@
+{% extends 'templates/app.twig' %}
+
+{% block title %}TMS - Upload{% endblock %}
+
+{% block contents %}
+    <section class="content-header">
+        <h1>
+            New Service & Maintenance
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href="{{ base_url() }}"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li><a href="{{ path_for('TMS.Home') }}">TMS</a></li>
+            <li class="active">New Services</li>
+        </ol>
+    </section>
+    <!-- Main content -->
+    <section class="content">
+        <div class="box-header has-border">
+            <h3 class="box-title">New Service & Maintenance Record</h3>
+        </div>
+        <div class="box-body">
+            <form action="{{ path_for('TMS.Upload') }}" class="" method="post" id="serviceAttachment" enctype="multipart/form-data">
+                <input name="serviceAttachment" id="serviceAttachment" type="file" class="form-control"/>
+                {{ csrf.field | raw }}
+                <input type="submit" name="submit" id="submit" value="Submit" >
+            </form>
+        </div>
+{% endblock %}

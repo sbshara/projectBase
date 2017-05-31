@@ -1,0 +1,84 @@
+{% extends 'templates/app.twig' %}
+
+{% block title %}Projects - All Projects{% endblock %}
+
+{% block contents %}
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <h1>
+            All Projects
+            <small>This is your all projects page</small>
+        </h1>
+        <!--GUIDANCE MAPPER (TOP RIGHT)-->
+        <ol class="breadcrumb">
+            <li><a href="{{ path_for('home') }}"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li class="active">Projects</li>
+        </ol>
+        <!--END OF GUIDANCE MAPPER-->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+
+        <div class="col-xs-12 table-responsive">
+            <table class="table table-responsive table-striped table-hover table-condensed table-bordered">
+                <thead class="header">
+                <tr>
+                    <th>Project ID</th>
+                    <th>Project Name (Short)</th>
+                    <th>Status</th>
+                    <th>Progress</th>
+                    <th>Related Tasks (Count)</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for project in Projects %}
+                    <tr>
+                        <td><a href="{{ path_for('PRO.ProjectById', {'project_id':project.id}) }}"> Project: {{ project.id }}</a></td>
+                        <td>{{ project.shortname }}</td>
+                        <td>
+                            <select name="status" record="{{ project.id }}" id="status" class="form-control">
+                                {% for status in OPS.ProjectStatus %}
+                                    <option value="{{ status.id }}" {% if project.status == status.id %}selected{% endif %}>{{ status.statusname | e }}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td>
+                            <select name="progress" record="{{ project.id }}" id="progress" class="form-control" onchange="updateProgressBar(this)">
+                                <option value="0%" {% if project.projectProgress() == '0%' %}selected{% endif %}>0%</option>
+                                <option value="10%" {% if project.projectProgress() == '10%' %}selected{% endif %}>10%</option>
+                                <option value="20%" {% if project.projectProgress() == '20%' %}selected{% endif %}>20%</option>
+                                <option value="30%" {% if project.projectProgress() == '30%' %}selected{% endif %}>30%</option>
+                                <option value="40%" {% if project.projectProgress() == '40%' %}selected{% endif %}>40%</option>
+                                <option value="50%" {% if project.projectProgress() == '50%' %}selected{% endif %}>50%</option>
+                                <option value="60%" {% if project.projectProgress() == '60%' %}selected{% endif %}>60%</option>
+                                <option value="70%" {% if project.projectProgress() == '70%' %}selected{% endif %}>70%</option>
+                                <option value="80%" {% if project.projectProgress() == '80%' %}selected{% endif %}>80%</option>
+                                <option value="90%" {% if project.projectProgress() == '90%' %}selected{% endif %}>90%</option>
+                                <option value="100%" {% if project.projectProgress() == '100%' %}selected{% endif %}>100%</option>
+                            </select>
+                        </td>
+                        {#<td style="width: 6em;">#}
+                            {#<div class="progress">#}
+                                {#<div#}
+                                        {#class="progress-bar progress-bar-primary progress-bar-striped"#}
+                                        {#role="progressbar"#}
+                                        {#aria-valuenow="{{ project.projectProgress() }}"#}
+                                        {#aria-valuemin="0%"#}
+                                        {#aria-valuemax="100%"#}
+                                        {#style="width: {{ project.projectProgress() }}"#}
+                                        {#id="progressBar">#}
+                                {#</div>#}
+                            {#</div>#}
+                        {#</td>#}
+                        <td>Count Number of related tasks project.taskCount()</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </section>
+    <!-- /.content -->
+    </div>
+{% endblock %}

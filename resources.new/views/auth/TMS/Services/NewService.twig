@@ -1,0 +1,129 @@
+{% extends 'templates/app.twig' %}
+
+{% block title %}TMS - New Service & Maintenance Record{% endblock %}
+
+{% block contents %}
+    <section class="content-header">
+        <h1>
+            New Service & Maintenance
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href="{{ base_url() }}"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li><a href="{{ path_for('TMS.Home') }}">TMS</a></li>
+            <li class="active">New Services</li>
+        </ol>
+    </section>
+    <!-- Main content -->
+    <section class="content">
+        <div class="box-header has-border">
+            <h3 class="box-title">New Service & Maintenance Record</h3>
+        </div>
+        <div class="box-body">
+            {#<div class="col-lg-8 col-md-8">#}
+                {#<form action="{{ path_for('TMS.NewService') }}" method="post" autocomplete="on" enctype="multipart/form-data" >#}
+
+                {#<div class="form-group has-feedback{{ errors.truck ? ' has-error' : '' }}">#}
+                    {#<label for="truck">Truck / Vehicle: &nbsp; <span class="text-red">*</span></label>#}
+                    {#<select class="form-control" name="truck" id="truck">#}
+                        {#<option value="">Please Select A Vehicle / Truck ...</option>#}
+                        {#{% for vehicle in OPS.Vehicles %}#}
+                            {#<option value="{{ vehicle.id }}" {% if vehicle.id == old.truck %}selected{% endif %}>{{ vehicle.nickName() | e }}</option>#}
+                        {#{% endfor %}#}
+                    {#</select>#}
+                    {#{% if errors.truck %}#}
+                        {#<span class="help-block">{{ errors.truck | first }}</span>#}
+                    {#{% endif %}#}
+                {#</div>#}
+
+                {#<div class="form-group has-feedback{{ errors.category ? ' has-error' : '' }}">#}
+                    {#<label for="category">Category: &nbsp; <span class="text-red">*</span></label>#}
+                    {#<select class="form-control">#}
+                        {#<option value="">Please Select a Category ...</option>#}
+                        {#{% for category in OPS.Categories %}#}
+                            {#<option value="{{ category.id }}"{% if category.id == old.category %}selected{% endif %}>{{ category.category | e }}</option>#}
+                        {#{% endfor %}#}
+                    {#</select>#}
+                    {#{% if errors.category %}#}
+                        {#<span class="help-block">{{ errors.category | first }}</span>#}
+                    {#{% endif %}#}
+                {#</div>#}
+
+                {#<div class="form-group has-feedback{{ errors.mileage ? ' has-error' : '' }}">#}
+                    {#<label for="mileage">Current Mileage: &nbsp;</label>#}
+                    {#<div class="input-group has-feedback">#}
+                        {#<span class="input-group-addon">KMs</span>#}
+                        {#<input type="number" name="mileage" id="mileage" class="form-control" value="{{ old.mileage ?: '' }}" min="0" max="10000000" placeholder="68000"/>#}
+                    {#</div>#}
+                    {#{% if errors.mileage %}#}
+                        {#<span class="help-block">{{ errors.mileage | first }}</span>#}
+                    {#{% endif %}#}
+                {#</div>#}
+
+                {#<div class="form-group has-feedback{{ errors.cost ? ' has-error' : '' }}">#}
+                    {#<label for="cost">Cost: &nbsp;</label>#}
+                    {#<div class="input-group has-feedback">#}
+                        {#<span class="input-group-addon">AED</span>#}
+                        {#<input type="number" name="cost" id="cost" class="form-control" value="{{ old.cost ?: '' }}" min="0" max="500000" placeholder="1200"/>#}
+                        {#<span class="input-group-addon">.00</span>#}
+                    {#</div>#}
+                    {#{% if errors.cost %}#}
+                        {#<span class="help-block">{{ errors.cost | first }}</span>#}
+                    {#{% endif %}#}
+                {#</div>#}
+
+                {#<div class="form-group has-feedback{{ errors.startDate ? ' has-error' : '' }}">#}
+                    {#<label for="startDate">Service Date (From): &nbsp; <span class="text-red">*</span></label>#}
+                    {#<div class="input-group date">#}
+                        {#<div class="input-group-addon">#}
+                            {#<i class="fa fa-calendar"></i>#}
+                        {#</div>#}
+                        {#<input type="text" class="form-control pull-right date-picker" name="startDate" id="startDate" value="{{ old.startDate ?: '' }}">#}
+                    {#</div>#}
+                    {#{% if errors.startDate %}#}
+                        {#<span class="help-block">{{ errors.startDate | first }}</span>#}
+                    {#{% endif %}#}
+                {#</div>#}
+
+                {#<div class="form-group has-feedback{{ errors.endDate ? ' has-error' : '' }}">#}
+                    {#<label for="endDate">Service Date (To): &nbsp;</label>#}
+                    {#<div class="input-group date">#}
+                        {#<div class="input-group-addon">#}
+                            {#<i class="fa fa-calendar"></i>#}
+                        {#</div>#}
+                        {#<input type="text" class="form-control pull-right date-picker" name="endDate" id="endDate" value="{{ old.endDate ?: '2017-01-01' }}">#}
+                    {#</div>#}
+                    {#{% if errors.endDate %}#}
+                        {#<span class="help-block">{{ errors.endDate | first }}</span>#}
+                    {#{% endif %}#}
+                {#</div>#}
+
+                {#<div class="form-group has-feedback{{ errors.serviceDetails ? ' has-error' : '' }}">#}
+                    {#<label for="serviceDetails">Service Details: &nbsp; <span class="text-red">*</span></label>#}
+                    {#<textarea name="serviceDetails" id="serviceDetails" cols="30" rows="8" class="form-control">#}
+                        {#Service & Maintenance Details. (You can use text formatting in this area. try it out)#}
+                    {#</textarea>#}
+                    {#{% if errors.serviceDetails %}#}
+                        {#<span class="help-block">{{ errors.serviceDetails | first }}</span>#}
+                    {#{% endif %}#}
+                {#</div>#}
+                    {#{{ csrf.field | raw }}#}
+                    {#<br/>#}
+
+                {#<div class="form-group has-feedback">#}
+                    {#<input type="submit" name="submit" id="submit" class="btn btn-primary pull-right"#}
+                           {#value="Create Service & Maintenance Record"/>#}
+                {#</div>#}
+                {#</form>#}
+            {#</div>#}
+            {#<div class="col-lg-4 col-md-4">#}
+                <form action="{{ path_for('TMS.Upload') }}" class="dropzone" method="post" id="serviceAttachment" enctype="multipart/form-data">
+                    {{ csrf.field | raw }}
+                    <div class="fallback">
+                        <input name="serviceAttachment" type="file" class="form-control"/>
+                    </div>
+                    <input type="button" value="Upload" name="upload" id="upload"/>
+
+                </form>
+            {#</div>#}
+        </div>
+{% endblock %}

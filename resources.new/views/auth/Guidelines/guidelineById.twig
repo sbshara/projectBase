@@ -1,0 +1,36 @@
+{% extends 'templates/app.twig' %}
+
+{% block title %}Home{% endblock %}
+
+{% block bodyTags %}
+    hold-transition skin-blue sidebar-collapse sidebar-mini
+{% endblock %}
+
+{% block contents %}
+    <section class="content-header">
+        <h1>
+            {{ guideline.subject }}
+            <small>Preview of UI elements</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li><a href="#">Operations</a></li>
+            <li><a href="#">Guidelines Articles</a></li>
+            <li class="active">{{ guideline.subject }}</li>
+        </ol>
+    </section>
+    Guideline By ID (ID = {{ guideline.id }})
+    <br>
+    Subject: {{ guideline.subject }}
+    <br>
+    Body: {{ guideline.body }}
+    <br>
+    Created: {{ guideline.created_at }}
+    <br>
+    {% if guideline.updated_at %}
+        Updated: {{ guideline.updated_at }}
+        <br>
+    {% endif %}
+    Created By: {{ guideline.created_by }}
+    <br>
+{% endblock %}

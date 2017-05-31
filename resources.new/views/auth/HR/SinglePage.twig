@@ -1,0 +1,1089 @@
+{% extends 'templates/app.twig' %}
+{% block title %}Add Applicant Wizard{% endblock %}
+
+{% block bodyTags %}
+    hold-transition skin-blue sidebar-collapse sidebar-mini
+{% endblock %}
+
+
+{% block contents %}
+<form action="{{ path_for('HR.NewApplicant') }}" method="post" autocomplete="on" enctype="multipart/form-data" >
+    <div id="accordion">
+        {# TODO: Change color of tag according to theme color #}
+        <h3 style="background: #3c8dbc; border: #000000; ">Applicant</h3>
+        <div id="SEC1" class="register-box-body">
+            <div class="form-group has-feedback{{ errors.first_name ? ' has-error' : '' }}">
+                <label for="first_name">First Name: &nbsp;</label><span class="text-red"><b>*</b></span>
+                <input type="text" name="first_name" id="first_name" class="form-control" value="{{ old.first_name }}" placeholder="Applicant's First Name" />
+                <span class="glyphicon glyphicon-user form-control-feedback"></span>
+                {% if errors.first_name %}
+                    <span class="help-block">{{ errors.first_name | first }}</span>
+                {% endif %}
+            </div>
+            <div class="form-group has-feedback{{ errors.last_name ? ' has-error' : '' }}">
+                <label class="required" for="last_name">Last Name: &nbsp;</label><span class="text-red"><b>*</b></span>
+                <input type="text" name="last_name" id="last_name" class="form-control" value="{{ old.last_name }}" placeholder="Applicant's Last Name"/>
+                <span class="glyphicon glyphicon-user form-control-feedback"></span>
+                {% if errors.last_name %}
+                    <span class="help-block">{{ errors.last_name | first }}</span>
+                {% endif %}
+            </div>
+            <div class="form-group has-feedback{{ errors.per_email ? ' has-error' : '' }}">
+                <label for="per_email">Personal Email: &nbsp;</label><span class="text-red"><b>*</b></span>
+                <input type="email" name="per_email" id="per_email" placeholder="applicant@domain.com" class="form-control" value="{{ old.per_email }}"/>
+                <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+                {% if errors.per_email %}
+                    <span class="help-block">{{ errors.per_email | first }}</span>
+                {% endif %}
+            </div>
+            <div class="form-group has-feedback{{ errors.mobile_phone ? ' has-error' : '' }}">
+                <label for="mobile_phone">Mobile Phone Number: &nbsp;</label><span class="text-red"><b>*</b></span>
+                <input type="tel" name="mobile_phone" id="mobile_phone" placeholder="+971 50 000 0000" class="form-control" value="{{ old.mobile_phone }}"/>
+                <span class="glyphicon glyphicon-phone form-control-feedback"></span>
+                {% if errors.mobile_phone %}
+                    <span class="help-block">{{ errors.mobile_phone | first }}</span>
+                {% endif %}
+            </div>
+            <div class="form-group has-feedback{{ errors.gender ? ' has-error' : '' }}">
+                <label for="male">Gender: &nbsp;</label><span class="text-red"><b>*</b></span> &nbsp;
+                <input type="radio" name="gender" id="male" value="M" {% if old.gender == 'M' %}checked="checked"{% endif %}/>
+                <span class="fa fa-male"> Male &nbsp; &nbsp;</span>
+                <input type="radio" name="gender" id="female" value="F" {% if old.gender == 'F' %}checked="checked"{% endif %}/>
+                <span class="fa fa-female"> Female</span>
+                {% if errors.gender %}
+                    <span class="help-block">{{ errors.gender | first }}</span>
+                {% endif %}
+            </div>
+            <div class="form-group has-feedback{{ errors.nationality ? ' has-error' : '' }}">
+                <label for="nationality">Nationality: &nbsp;</label><span class="text-red"><b>*</b></span>
+                <select class="form-control" name="nationality" id="nationality">
+                    <option value="">Please Select ... </option>
+                    {% for country in HR.countries %}
+                        <option value="{{ country.id }}" {% if country.id == old.nationality %}selected{% endif %}>{{ country.country_name | e }}</option>
+                    {% endfor %}
+                </select>
+                {% if errors.nationality %}
+                    <span class="help-block">{{ errors.nationality | first }}</span>
+                {% endif %}
+            </div>
+            <div class="form-group has-feedback{{ errors.dob ? ' has-error' : '' }}">
+                <label for="date-picker">Date of Birth: &nbsp;</label><span class="text-red"><b>*</b></span>
+                <div class="input-group date">
+                    <div class="input-group-addon">
+                        <i class="fa fa-calendar"></i>
+                    </div>
+                    <input type="text" class="form-control pull-right" name="dob" id="datepicker" value="{{ old.dob }}">
+                </div>
+                {% if errors.dob %}
+                    <span class="help-block">{{ errors.dob | first }}</span>
+                {% endif %}
+            </div>
+            <div class="form-group has-feedback{{ errors.profilepic ? ' has-error' : '' }}">
+                <label for="profilePic">Photo: &nbsp;</label><span class="text-red"><b>*</b></span>
+                <input type="file" id="profilePic" name="profilepic" value="{{ old.profilepic }}" class="form-control-static">
+                <p class="help-block"><small><i>File must be *.jpg, *.jpeg, *.png, *.gif, or *.bmb and < 3MBs</i></small></p>
+                {% if errors.profilepic %}
+                    <span class="help-block">{{ errors.profilepic | first }}</span>
+                {% endif %}
+            </div>
+            <div id="newAttachment" class="form-group">
+                <label for="help-me">Attachments:</label>
+                <p class="help-block" id="help-me"><span><i>Attach CV, Passport Copy, VISA Copy, Educational Degree, or any other related documents<br/><mark>Remember to rename the files respectively</mark></i></span></p>
+                <input type="hidden" id="attachmentCounter" name="attachmentCounter" value="-1">
+                <input type="button" id="add" class="btn btn-xs" onclick="showInput('divattachmentGroup', 'attachmentCounter')" value="Add New" title="Add new attachment field"/>
+                <input type="button" id="remove" class="btn btn-xs btn-danger" onclick="hideInput('divattachmentGroup', 'attachmentCounter')" value="Remove" title="Removes the last item" />
+                <br/>
+                <div class="form-group bg-gray-light hidden has-feedback{{ errors.attachmentCountry0 ? ' has-error' : '' }}{{ errors.attachmentType0 ? ' has-error' : '' }}{{ errors.attachmentIssuer0 ? ' has-error' : '' }}{{ errors.attachmentIssueDate0 ? ' has-error' : '' }}{{ errors.attachmentExpiryDate0 ? ' has-error' : '' }}" id="divattachmentGroup0">
+                    <div class="input-group inline has-feedback" id="div2attachment0">
+                        <label for="attachment0">File: &nbsp;</label>
+                        <input type="file" id="attachment0" name="attachment[]" > &nbsp;
+                    </div>
+                    <div class="input-group inline has-feedback{{ errors.attachmentCountry0 ? ' has-error' : '' }}" id="attachmentCountry0">
+                        <label for="attachmentCountry0">Issuance Country: &nbsp;</label>
+                        <select name="attachmentCountry0" id="attachmentCountry0">
+                            <option value="">Please Select ... </option>
+                            {% for country in HR.countries %}
+                                <option value="{{ country.id }}" {% if country.id == old.attachmentCountry0 %}selected{% endif %}>{{ country.country_name | e }}</option>
+                            {% endfor %}
+                        </select>
+                        {% if errors.attachmentCountry0 %}
+                            <span class="help-block">{{ errors.attachmentCountry0 | first }}</span>
+                        {% endif %}
+                    </div>
+                    <br/>
+                    <div class="input-group inline has-feedback{{ errors.attachmentType0 ? ' has-error' : '' }}" id="attachmentType0">
+                        <label for="attachmentType0">Type: &nbsp;</label>
+                        <input id="attachmentType0" name="attachmentType0" type="text" value="{{ old.attachmentType0 }}">
+                        {% if errors.attachmentType0 %}
+                            <span class="help-block">{{ errors.attachmentType0 | first }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="input-group inline has-feedback{{ errors.attachmentIssuer0 ? ' has-error' : '' }}" id="attachmentIssuer0">
+                        <label for="attachmentIssuer0">Issued By: &nbsp;</label>
+                        <input type="text" id="attachmentIssuer0" name="attachmentIssuer0" value="{{ old.attachmentIssuer0 }}"> &nbsp;
+                        {% if errors.attachmentIssuer0 %}
+                            <span class="help-block">{{ errors.attachmentIssuer0 | first }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="input-group inline has-feedback{{ errors.attachmentIssueDate0 ? ' has-error' : '' }}" id="attachmentIssueDate0">
+                        <label for="attachmentIssueDate0">Issue Date: &nbsp;</label>
+                        <input type="date" id="attachmentIssueDate0" name="attachmentIssueDate0" value="{{ old.attachmentIssueDate0 ? old.attachmentIssueDate0 : '1999-12-31' }}"> &nbsp;
+                        {% if errors.attachmentIssueDate0 %}
+                            <span class="help-block">{{ errors.attachmentIssueDate0 | first }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="input-group inline has-feedback{{ errors.attachmentExpiryDate0 ? ' has-error' : '' }}" id="attachmentExpiryDate0">
+                        <label for="attachmentExpiryDate0">Expiry Date: &nbsp;</label>
+                        <input type="date" id="attachmentExpiryDate0" name="attachmentExpiryDate0" value="{{ old.attachmentExpiryDate0 ? old.attachmentExpiryDate0 : '2099-12-31' }}"> &nbsp;
+                        {% if errors.attachmentExpiryDate0 %}
+                            <span class="help-block">{{ errors.attachmentExpiryDate0 | first }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="form-group hidden has-feedback{{ errors.attachmentCountry1 ? ' has-error' : '' }}{{ errors.attachmentType1 ? ' has-error' : '' }}{{ errors.attachmentIssuer1 ? ' has-error' : '' }}{{ errors.attachmentIssueDate1 ? ' has-error' : '' }}{{ errors.attachmentExpiryDate1 ? ' has-error' : '' }}" id="divattachmentGroup1">
+                    <div class="input-group inline has-feedback" id="div2attachment1">
+                        <label for="attachment1">File: &nbsp;</label>
+                        <input type="file" id="attachment1" name="attachment[]"> &nbsp;
+                    </div>
+                    <div class="input-group inline has-feedback{{ errors.attachmentCountry1 ? ' has-error' : '' }}" id="attachmentCountry1">
+                        <label for="attachmentCountry1">Issuance Country: &nbsp;</label>
+                        <select name="attachmentCountry1" id="attachmentCountry1">
+                            <option value="">Please Select ... </option>
+                            {% for country in HR.countries %}
+                                <option value="{{ country.id }}" {% if country.id == old.attachmentCountry1 %}selected{% endif %}>{{ country.country_name | e }}</option>
+                            {% endfor %}
+                        </select>
+                        {% if errors.attachmentCountry1 %}
+                            <span class="help-block">{{ errors.attachmentCountry1 | first }}</span>
+                        {% endif %}
+                    </div>
+                    <br/>
+                    <div class="input-group inline has-feedback{{ errors.attachmentType1 ? ' has-error' : '' }}" id="attachmentType1">
+                        <label for="attachmentType1">Type: &nbsp;</label>
+                        <input id="attachmentType1" name="attachmentType1" type="text" value="{{ old.attachmentType1 }}">
+                        {% if errors.attachmentType1 %}
+                            <span class="help-block">{{ errors.attachmentType1 | first }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="input-group inline has-feedback{{ errors.attachmentIssuer1 ? ' has-error' : '' }}" id="attachmentIssuer1">
+                        <label for="attachmentIssuer1">Issued By: &nbsp;</label>
+                        <input type="text" id="attachmentIssuer1" name="attachmentIssuer1" value="{{ old.attachmentIssuer1 }}"> &nbsp;
+                        {% if errors.attachmentIssuer1 %}
+                            <span class="help-block">{{ errors.attachmentIssuer1 | first }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="input-group inline has-feedback{{ errors.attachmentIssueDate1 ? ' has-error' : '' }}" id="attachmentIssueDate1">
+                        <label for="attachmentIssueDate1">Issue Date: &nbsp;</label>
+                        <input type="date" id="attachmentIssueDate1" name="attachmentIssueDate1" value="{{ old.attachmentIssueDate1 ? old.attachmentIssueDate1 : '1999-12-31' }}"> &nbsp;
+                        {% if errors.attachmentIssueDate1 %}
+                            <span class="help-block">{{ errors.attachmentIssueDate1 | first }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="input-group inline has-feedback{{ errors.attachmentExpiryDate1 ? ' has-error' : '' }}" id="attachmentExpiryDate1">
+                        <label for="attachmentExpiryDate1">Expiry Date: &nbsp;</label>
+                        <input type="date" id="attachmentExpiryDate1" name="attachmentExpiryDate1" value="{{ old.attachmentExpiryDate1 ? old.attachmentExpiryDate1 : '2099-12-31' }}"> &nbsp;
+                        {% if errors.attachmentExpiryDate1 %}
+                            <span class="help-block">{{ errors.attachmentExpiryDate1 | first }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="form-group bg-gray-light hidden has-feedback{{ errors.attachmentCountry2 ? ' has-error' : '' }}{{ errors.attachmentType2 ? ' has-error' : '' }}{{ errors.attachmentIssuer2 ? ' has-error' : '' }}{{ errors.attachmentIssueDate2 ? ' has-error' : '' }}{{ errors.attachmentExpiryDate2 ? ' has-error' : '' }}" id="divattachmentGroup2">
+                    <div class="input-group inline has-feedback" id="div2attachment2">
+                        <label for="attachment2">File: &nbsp;</label>
+                        <input type="file" id="attachment2" name="attachment[]"> &nbsp;
+                    </div>
+                    <div class="input-group inline has-feedback{{ errors.attachmentCountry2 ? ' has-error' : '' }}" id="attachmentCountry2">
+                        <label for="attachmentCountry2">Issuance Country: &nbsp;</label>
+                        <select name="attachmentCountry2" id="attachmentCountry2">
+                            <option value="">Please Select ... </option>
+                            {% for country in HR.countries %}
+                                <option value="{{ country.id }}" {% if country.id == old.attachmentCountry2 %}selected{% endif %}>{{ country.country_name | e }}</option>
+                            {% endfor %}
+                        </select>
+                        {% if errors.attachmentCountry2 %}
+                            <span class="help-block">{{ errors.attachmentCountry2 | first }}</span>
+                        {% endif %}
+                    </div>
+                    <br/>
+                    <div class="input-group inline has-feedback{{ errors.attachmentType2 ? ' has-error' : '' }}" id="attachmentType2">
+                        <label for="attachmentType2">Type: &nbsp;</label>
+                        <input id="attachmentType2" name="attachmentType2" type="text" value="{{ old.attachmentType2 }}">
+                        {% if errors.attachmentType2 %}
+                            <span class="help-block">{{ errors.attachmentType2 | first }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="input-group inline has-feedback{{ errors.attachmentIssuer2 ? ' has-error' : '' }}" id="attachmentIssuer2">
+                        <label for="attachmentIssuer2">Issued By: &nbsp;</label>
+                        <input type="text" id="attachmentIssuer2" name="attachmentIssuer2" value="{{ old.attachmentIssuer2 }}"> &nbsp;
+                        {% if errors.attachmentIssuer2 %}
+                            <span class="help-block">{{ errors.attachmentIssuer2 | first }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="input-group inline has-feedback{{ errors.attachmentIssueDate2 ? ' has-error' : '' }}" id="attachmentIssueDate2">
+                        <label for="attachmentIssueDate2">Issue Date: &nbsp;</label>
+                        <input type="date" id="attachmentIssueDate2" name="attachmentIssueDate2" value="{{ old.attachmentIssueDate2 ? old.attachmentIssueDate2 : '1999-12-31' }}"> &nbsp;
+                        {% if errors.attachmentIssueDate2 %}
+                            <span class="help-block">{{ errors.attachmentIssueDate2 | first }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="input-group inline has-feedback{{ errors.attachmentExpiryDate2 ? ' has-error' : '' }}" id="attachmentExpiryDate2">
+                        <label for="attachmentExpiryDate2">Expiry Date: &nbsp;</label>
+                        <input type="date" id="attachmentExpiryDate2" name="attachmentExpiryDate2" value="{{ old.attachmentExpiryDate2 ? old.attachmentExpiryDate2 : '2099-12-31' }}"> &nbsp;
+                        {% if errors.attachmentExpiryDate2 %}
+                            <span class="help-block">{{ errors.attachmentExpiryDate2 | first }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="form-group hidden has-feedback{{ errors.attachmentCountry3 ? ' has-error' : '' }}{{ errors.attachmentType3 ? ' has-error' : '' }}{{ errors.attachmentIssuer3 ? ' has-error' : '' }}{{ errors.attachmentIssueDate3 ? ' has-error' : '' }}{{ errors.attachmentExpiryDate3 ? ' has-error' : '' }}" id="divattachmentGroup3">
+                    <div class="input-group inline has-feedback" id="div2attachment3">
+                        <label for="attachment3">File: &nbsp;</label>
+                        <input type="file" id="attachment3" name="attachment[]"> &nbsp;
+                    </div>
+                    <div class="input-group inline has-feedback{{ errors.attachmentCountry3 ? ' has-error' : '' }}" id="attachmentCountry3">
+                        <label for="attachmentCountry3">Issuance Country: &nbsp;</label>
+                        <select name="attachmentCountry3" id="attachmentCountry3">
+                            <option value="">Please Select ... </option>
+                            {% for country in HR.countries %}
+                                <option value="{{ country.id }}" {% if country.id == old.attachmentCountry3 %}selected{% endif %}>{{ country.country_name | e }}</option>
+                            {% endfor %}
+                        </select>
+                        {% if errors.attachmentCountry3 %}
+                            <span class="help-block">{{ errors.attachmentCountry3 | first }}</span>
+                        {% endif %}
+                    </div>
+                    <br/>
+                    <div class="input-group inline has-feedback{{ errors.attachmentType3 ? ' has-error' : '' }}" id="attachmentType3">
+                        <label for="attachmentType3">Type: &nbsp;</label>
+                        <input id="attachmentType3" name="attachmentType3" type="text" value="{{ old.attachmentType3 }}">
+                        {% if errors.attachmentType3 %}
+                            <span class="help-block">{{ errors.attachmentType3 | first }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="input-group inline has-feedback{{ errors.attachmentIssuer3 ? ' has-error' : '' }}" id="attachmentIssuer3">
+                        <label for="attachmentIssuer3">Issued By: &nbsp;</label>
+                        <input type="text" id="attachmentIssuer3" name="attachmentIssuer3" value="{{ old.attachmentIssuer3 }}"> &nbsp;
+                        {% if errors.attachmentIssuer3 %}
+                            <span class="help-block">{{ errors.attachmentIssuer3 | first }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="input-group inline has-feedback{{ errors.attachmentIssueDate3 ? ' has-error' : '' }}" id="attachmentIssueDate3">
+                        <label for="attachmentIssueDate3">Issue Date: &nbsp;</label>
+                        <input type="date" id="attachmentIssueDate3" name="attachmentIssueDate3" value="{{ old.attachmentIssueDate3 ? old.attachmentIssueDate3 : '1999-12-31' }}"> &nbsp;
+                        {% if errors.attachmentIssueDate3 %}
+                            <span class="help-block">{{ errors.attachmentIssueDate3 | first }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="input-group inline has-feedback{{ errors.attachmentExpiryDate3 ? ' has-error' : '' }}" id="attachmentExpiryDate3">
+                        <label for="attachmentExpiryDate3">Expiry Date: &nbsp;</label>
+                        <input type="date" id="attachmentExpiryDate3" name="attachmentExpiryDate3" value="{{ old.attachmentExpiryDate3 ? old.attachmentExpiryDate3 : '2099-12-31' }}"> &nbsp;
+                        {% if errors.attachmentExpiryDate3 %}
+                            <span class="help-block">{{ errors.attachmentExpiryDate3 | first }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="form-group bg-gray-light hidden has-feedback{{ errors.attachmentCountry4 ? ' has-error' : '' }}{{ errors.attachmentType4 ? ' has-error' : '' }}{{ errors.attachmentIssuer4 ? ' has-error' : '' }}{{ errors.attachmentIssueDate4 ? ' has-error' : '' }}{{ errors.attachmentExpiryDate4 ? ' has-error' : '' }}" id="divattachmentGroup4">
+                    <div class="input-group inline has-feedback" id="div2attachment4">
+                        <label for="attachment4">File: &nbsp;</label>
+                        <input type="file" id="attachment4" name="attachment[]"> &nbsp;
+                    </div>
+                    <div class="input-group inline has-feedback{{ errors.attachmentCountry4 ? ' has-error' : '' }}" id="attachmentCountry4">
+                        <label for="attachmentCountry4">Issuance Country: &nbsp;</label>
+                        <select name="attachmentCountry4" id="attachmentCountry4">
+                            <option value="">Please Select ... </option>
+                            {% for country in HR.countries %}
+                                <option value="{{ country.id }}" {% if country.id == old.attachmentCountry4 %}selected{% endif %}>{{ country.country_name | e }}</option>
+                            {% endfor %}
+                        </select>
+                        {% if errors.attachmentCountry4 %}
+                            <span class="help-block">{{ errors.attachmentCountry4 | first }}</span>
+                        {% endif %}
+                    </div>
+                    <br/>
+                    <div class="input-group inline has-feedback{{ errors.attachmentType4 ? ' has-error' : '' }}" id="attachmentType4">
+                        <label for="attachmentType4">Type: &nbsp;</label>
+                        <input id="attachmentType4" name="attachmentType4" type="text" value="{{ old.attachmentType4 }}">
+                        {% if errors.attachmentType4 %}
+                            <span class="help-block">{{ errors.attachmentType4 | first }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="input-group inline has-feedback{{ errors.attachmentIssuer4 ? ' has-error' : '' }}" id="attachmentIssuer4">
+                        <label for="attachmentIssuer4">Issued By: &nbsp;</label>
+                        <input type="text" id="attachmentIssuer4" name="attachmentIssuer4" value="{{ old.attachmentIssuer4 }}"> &nbsp;
+                        {% if errors.attachmentIssuer4 %}
+                            <span class="help-block">{{ errors.attachmentIssuer4 | first }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="input-group inline has-feedback{{ errors.attachmentIssueDate4 ? ' has-error' : '' }}" id="attachmentIssueDate4">
+                        <label for="attachmentIssueDate4">Issue Date: &nbsp;</label>
+                        <input type="date" id="attachmentIssueDate4" name="attachmentIssueDate4" value="{{ old.attachmentIssueDate4 ? old.attachmentIssueDate4 : '1999-12-31' }}"> &nbsp;
+                        {% if errors.attachmentIssueDate4 %}
+                            <span class="help-block">{{ errors.attachmentIssueDate4 | first }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="input-group inline has-feedback{{ errors.attachmentExpiryDate4 ? ' has-error' : '' }}" id="attachmentExpiryDate4">
+                        <label for="attachmentExpiryDate4">Expiry Date: &nbsp;</label>
+                        <input type="date" id="attachmentExpiryDate4" name="attachmentExpiryDate4" value="{{ old.attachmentExpiryDate4 ? old.attachmentExpiryDate4 : '2099-12-31' }}"> &nbsp;
+                        {% if errors.attachmentExpiryDate4 %}
+                            <span class="help-block">{{ errors.attachmentExpiryDate4 | first }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="form-group hidden  has-feedback{{ errors.attachmentCountry5 ? ' has-error' : '' }}{{ errors.attachmentType5 ? ' has-error' : '' }}{{ errors.attachmentIssuer5 ? ' has-error' : '' }}{{ errors.attachmentIssueDate5 ? ' has-error' : '' }}{{ errors.attachmentExpiryDate5 ? ' has-error' : '' }}" id="divattachmentGroup5">
+                    <div class="input-group inline has-feedback" id="div2attachment5">
+                        <label for="attachment5">File: &nbsp;</label>
+                        <input type="file" id="attachment5" name="attachment[]"> &nbsp;
+                    </div>
+                    <div class="input-group inline has-feedback{{ errors.attachmentCountry5 ? ' has-error' : '' }}" id="attachmentCountry5">
+                        <label for="attachmentCountry5">Issuance Country: &nbsp;</label>
+                        <select name="attachmentCountry5" id="attachmentCountry5">
+                            <option value="">Please Select ... </option>
+                            {% for country in HR.countries %}
+                                <option value="{{ country.id }}" {% if country.id == old.attachmentCountry5 %}selected{% endif %}>{{ country.country_name | e }}</option>
+                            {% endfor %}
+                        </select>
+                        {% if errors.attachmentCountry5 %}
+                            <span class="help-block">{{ errors.attachmentCountry5 | first }}</span>
+                        {% endif %}
+                    </div>
+                    <br/>
+                    <div class="input-group inline has-feedback{{ errors.attachmentType5 ? ' has-error' : '' }}" id="attachmentType5">
+                        <label for="attachmentType5">Type: &nbsp;</label>
+                        <input id="attachmentType5" name="attachmentType5" type="text" value="{{ old.attachmentType5 }}">
+                        {% if errors.attachmentType5 %}
+                            <span class="help-block">{{ errors.attachmentType5 | first }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="input-group inline has-feedback{{ errors.attachmentIssuer5 ? ' has-error' : '' }}" id="attachmentIssuer5">
+                        <label for="attachmentIssuer5">Issued By: &nbsp;</label>
+                        <input type="text" id="attachmentIssuer5" name="attachmentIssuer5" value="{{ old.attachmentIssuer5 }}"> &nbsp;
+                        {% if errors.attachmentIssuer5 %}
+                            <span class="help-block">{{ errors.attachmentIssuer5 | first }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="input-group inline has-feedback{{ errors.attachmentIssueDate5 ? ' has-error' : '' }}" id="attachmentIssueDate5">
+                        <label for="attachmentIssueDate5">Issue Date: &nbsp;</label>
+                        <input type="date" id="attachmentIssueDate5" name="attachmentIssueDate5" value="{{ old.attachmentIssueDate5 ? old.attachmentIssueDate5 : '1999-12-31' }}"> &nbsp;
+                        {% if errors.attachmentIssueDate5 %}
+                            <span class="help-block">{{ errors.attachmentIssueDate5 | first }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="input-group inline has-feedback{{ errors.attachmentExpiryDate5 ? ' has-error' : '' }}" id="attachmentExpiryDate5">
+                        <label for="attachmentExpiryDate5">Expiry Date: &nbsp;</label>
+                        <input type="date" id="attachmentExpiryDate5" name="attachmentExpiryDate5" value="{{ old.attachmentExpiryDate5 ? old.attachmentExpiryDate5 : '2099-12-31' }}"> &nbsp;
+                        {% if errors.attachmentExpiryDate5 %}
+                            <span class="help-block">{{ errors.attachmentExpiryDate5 | first }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="form-group bg-gray-light hidden has-feedback{{ errors.attachmentCountry6 ? ' has-error' : '' }}{{ errors.attachmentType6 ? ' has-error' : '' }}{{ errors.attachmentIssuer6 ? ' has-error' : '' }}{{ errors.attachmentIssueDate6 ? ' has-error' : '' }}{{ errors.attachmentExpiryDate6 ? ' has-error' : '' }}" id="divattachmentGroup6">
+                    <div class="input-group inline has-feedback" id="div2attachment6">
+                        <label for="attachment6">File: &nbsp;</label>
+                        <input type="file" id="attachment6" name="attachment[]"> &nbsp;
+                    </div>
+                    <div class="input-group inline has-feedback{{ errors.attachmentCountry6 ? ' has-error' : '' }}" id="attachmentCountry6">
+                        <label for="attachmentCountry6">Issuance Country: &nbsp;</label>
+                        <select name="attachmentCountry6" id="attachmentCountry6">
+                            <option value="">Please Select ... </option>
+                            {% for country in HR.countries %}
+                                <option value="{{ country.id }}" {% if country.id == old.attachmentCountry6 %}selected{% endif %}>{{ country.country_name | e }}</option>
+                            {% endfor %}
+                        </select>
+                        {% if errors.attachmentCountry6 %}
+                            <span class="help-block">{{ errors.attachmentCountry6 | first }}</span>
+                        {% endif %}
+                    </div>
+                    <br/>
+                    <div class="input-group inline has-feedback{{ errors.attachmentType6 ? ' has-error' : '' }}" id="attachmentType6">
+                        <label for="attachmentType6">Type: &nbsp;</label>
+                        <input id="attachmentType6" name="attachmentType6" type="text" value="{{ old.attachmentType6 }}">
+                        {% if errors.attachmentType6 %}
+                            <span class="help-block">{{ errors.attachmentType6 | first }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="input-group inline has-feedback{{ errors.attachmentIssuer6 ? ' has-error' : '' }}" id="attachmentIssuer6">
+                        <label for="attachmentIssuer6">Issued By: &nbsp;</label>
+                        <input type="text" id="attachmentIssuer6" name="attachmentIssuer6" value="{{ old.attachmentIssuer6 }}"> &nbsp;
+                        {% if errors.attachmentIssuer6 %}
+                            <span class="help-block">{{ errors.attachmentIssuer6 | first }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="input-group inline has-feedback{{ errors.attachmentIssueDate6 ? ' has-error' : '' }}" id="attachmentIssueDate6">
+                        <label for="attachmentIssueDate6">Issue Date: &nbsp;</label>
+                        <input type="date" id="attachmentIssueDate6" name="attachmentIssueDate6" value="{{ old.attachmentIssueDate6 ? old.attachmentIssueDate6 : '1999-12-31' }}"> &nbsp;
+                        {% if errors.attachmentIssueDate6 %}
+                            <span class="help-block">{{ errors.attachmentIssueDate6 | first }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="input-group inline has-feedback{{ errors.attachmentExpiryDate6 ? ' has-error' : '' }}" id="attachmentExpiryDate6">
+                        <label for="attachmentExpiryDate6">Expiry Date: &nbsp;</label>
+                        <input type="date" id="attachmentExpiryDate6" name="attachmentExpiryDate6" value="{{ old.attachmentExpiryDate6 ? old.attachmentExpiryDate6 : '2099-12-31' }}"> &nbsp;
+                        {% if errors.attachmentExpiryDate6 %}
+                            <span class="help-block">{{ errors.attachmentExpiryDate6 | first }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="form-group hidden has-feedback{{ errors.attachmentCountry7 ? ' has-error' : '' }}{{ errors.attachmentType7 ? ' has-error' : '' }}{{ errors.attachmentIssuer7 ? ' has-error' : '' }}{{ errors.attachmentIssueDate7 ? ' has-error' : '' }}{{ errors.attachmentExpiryDate7 ? ' has-error' : '' }}" id="divattachmentGroup7">
+                    <div class="input-group inline has-feedback" id="div2attachment7">
+                        <label for="attachment7">File: &nbsp;</label>
+                        <input type="file" id="attachment7" name="attachment[]"> &nbsp;
+                    </div>
+                    <div class="input-group inline has-feedback{{ errors.attachmentCountry7 ? ' has-error' : '' }}" id="attachmentCountry7">
+                        <label for="attachmentCountry7">Issuance Country: &nbsp;</label>
+                        <select name="attachmentCountry7" id="attachmentCountry7">
+                            <option value="">Please Select ... </option>
+                            {% for country in HR.countries %}
+                                <option value="{{ country.id }}" {% if country.id == old.attachmentCountry7 %}selected{% endif %}>{{ country.country_name | e }}</option>
+                            {% endfor %}
+                        </select>
+                        {% if errors.attachmentCountry7 %}
+                            <span class="help-block">{{ errors.attachmentCountry7 | first }}</span>
+                        {% endif %}
+                    </div>
+                    <br/>
+                    <div class="input-group inline has-feedback{{ errors.attachmentType7 ? ' has-error' : '' }}" id="attachmentType7">
+                        <label for="attachmentType7">Type: &nbsp;</label>
+                        <input id="attachmentType7" name="attachmentType7" type="text" value="{{ old.attachmentType7 }}">
+                        {% if errors.attachmentType7 %}
+                            <span class="help-block">{{ errors.attachmentType7 | first }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="input-group inline has-feedback{{ errors.attachmentIssuer7 ? ' has-error' : '' }}" id="attachmentIssuer7">
+                        <label for="attachmentIssuer7">Issued By: &nbsp;</label>
+                        <input type="text" id="attachmentIssuer7" name="attachmentIssuer7" value="{{ old.attachmentIssuer7 }}"> &nbsp;
+                        {% if errors.attachmentIssuer7 %}
+                            <span class="help-block">{{ errors.attachmentIssuer7 | first }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="input-group inline has-feedback{{ errors.attachmentIssueDate7 ? ' has-error' : '' }}" id="attachmentIssueDate7">
+                        <label for="attachmentIssueDate7">Issue Date: &nbsp;</label>
+                        <input type="date" id="attachmentIssueDate7" name="attachmentIssueDate7" value="{{ old.attachmentIssueDate7 ? old.attachmentIssueDate7 : '1999-12-31' }}"> &nbsp;
+                        {% if errors.attachmentIssueDate7 %}
+                            <span class="help-block">{{ errors.attachmentIssueDate7 | first }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="input-group inline has-feedback{{ errors.attachmentExpiryDate7 ? ' has-error' : '' }}" id="attachmentExpiryDate7">
+                        <label for="attachmentExpiryDate7">Expiry Date: &nbsp;</label>
+                        <input type="date" id="attachmentExpiryDate7" name="attachmentExpiryDate7" value="{{ old.attachmentExpiryDate7 ? old.attachmentExpiryDate7 : '2099-12-31' }}"> &nbsp;
+                        {% if errors.attachmentExpiryDate7 %}
+                            <span class="help-block">{{ errors.attachmentExpiryDate7 | first }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="form-group bg-gray-light hidden has-feedback{{ errors.attachmentCountry8 ? ' has-error' : '' }}{{ errors.attachmentType8 ? ' has-error' : '' }}{{ errors.attachmentIssuer8 ? ' has-error' : '' }}{{ errors.attachmentIssueDate8 ? ' has-error' : '' }}{{ errors.attachmentExpiryDate8 ? ' has-error' : '' }}" id="divattachmentGroup8">
+                    <div class="input-group inline has-feedback" id="div2attachment8">
+                        <label for="attachment8">File: &nbsp;</label>
+                        <input type="file" id="attachment8" name="attachment[]"> &nbsp;
+                    </div>
+                    <div class="input-group inline has-feedback{{ errors.attachmentCountry8 ? ' has-error' : '' }}" id="attachmentCountry8">
+                        <label for="attachmentCountry8">Issuance Country: &nbsp;</label>
+                        <select name="attachmentCountry8" id="attachmentCountry8">
+                            <option value="">Please Select ... </option>
+                            {% for country in HR.countries %}
+                                <option value="{{ country.id }}" {% if country.id == old.attachmentCountry8 %}selected{% endif %}>{{ country.country_name | e }}</option>
+                            {% endfor %}
+                        </select>
+                        {% if errors.attachmentCountry8 %}
+                            <span class="help-block">{{ errors.attachmentCountry8 | first }}</span>
+                        {% endif %}
+                    </div>
+                    <br/>
+                    <div class="input-group inline has-feedback{{ errors.attachmentType8 ? ' has-error' : '' }}" id="attachmentType8">
+                        <label for="attachmentType8">Type: &nbsp;</label>
+                        <input id="attachmentType8" name="attachmentType8" type="text" value="{{ old.attachmentType8 }}">
+                        {% if errors.attachmentType8 %}
+                            <span class="help-block">{{ errors.attachmentType8 | first }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="input-group inline has-feedback{{ errors.attachmentIssuer8 ? ' has-error' : '' }}" id="attachmentIssuer8">
+                        <label for="attachmentIssuer8">Issued By: &nbsp;</label>
+                        <input type="text" id="attachmentIssuer8" name="attachmentIssuer8" value="{{ old.attachmentIssuer8 }}"> &nbsp;
+                        {% if errors.attachmentIssuer8 %}
+                            <span class="help-block">{{ errors.attachmentIssuer8 | first }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="input-group inline has-feedback{{ errors.attachmentIssueDate8 ? ' has-error' : '' }}" id="attachmentIssueDate8">
+                        <label for="attachmentIssueDate8">Issue Date: &nbsp;</label>
+                        <input type="date" id="attachmentIssueDate8" name="attachmentIssueDate8" value="{{ old.attachmentIssueDate8 ? old.attachmentIssueDate8 : '1999-12-31' }}"> &nbsp;
+                        {% if errors.attachmentIssueDate8 %}
+                            <span class="help-block">{{ errors.attachmentIssueDate8 | first }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="input-group inline has-feedback{{ errors.attachmentExpiryDate8 ? ' has-error' : '' }}" id="attachmentExpiryDate8">
+                        <label for="attachmentExpiryDate8">Expiry Date: &nbsp;</label>
+                        <input type="date" id="attachmentExpiryDate8" name="attachmentExpiryDate8" value="{{ old.attachmentExpiryDate8 ? old.attachmentExpiryDate8 : '2099-12-31' }}"> &nbsp;
+                        {% if errors.attachmentExpiryDate8 %}
+                            <span class="help-block">{{ errors.attachmentExpiryDate8 | first }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="form-group hidden has-feedback{{ errors.attachmentCountry9 ? ' has-error' : '' }}{{ errors.attachmentType9 ? ' has-error' : '' }}{{ errors.attachmentIssuer9 ? ' has-error' : '' }}{{ errors.attachmentIssueDate9 ? ' has-error' : '' }}{{ errors.attachmentExpiryDate9 ? ' has-error' : '' }}" id="divattachmentGroup9">
+                    <div class="input-group inline has-feedback" id="div2attachment9">
+                        <label for="attachment9">File: &nbsp;</label>
+                        <input type="file" id="attachment9" name="attachment[]"> &nbsp;
+                    </div>
+                    <div class="input-group inline has-feedback{{ errors.attachmentCountry9 ? ' has-error' : '' }}" id="attachmentCountry9">
+                        <label for="attachmentCountry9">Issuance Country: &nbsp;</label>
+                        <select name="attachmentCountry9" id="attachmentCountry9">
+                            <option value="">Please Select ... </option>
+                            {% for country in HR.countries %}
+                                <option value="{{ country.id }}" {% if country.id == old.attachmentCountry9 %}selected{% endif %}>{{ country.country_name | e }}</option>
+                            {% endfor %}
+                        </select>
+                        {% if errors.attachmentCountry9 %}
+                            <span class="help-block">{{ errors.attachmentCountry9 | first }}</span>
+                        {% endif %}
+                    </div>
+                    <br/>
+                    <div class="input-group inline has-feedback{{ errors.attachmentType9 ? ' has-error' : '' }}" id="attachmentType9">
+                        <label for="attachmentType9">Type: &nbsp;</label>
+                        <input id="attachmentType9" name="attachmentType9" type="text" value="{{ old.attachmentType9 }}">
+                        {% if errors.attachmentType9 %}
+                            <span class="help-block">{{ errors.attachmentType9 | first }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="input-group inline has-feedback{{ errors.attachmentIssuer9 ? ' has-error' : '' }}" id="attachmentIssuer9">
+                        <label for="attachmentIssuer9">Issued By: &nbsp;</label>
+                        <input type="text" id="attachmentIssuer9" name="attachmentIssuer9" value="{{ old.attachmentIssuer9 }}"> &nbsp;
+                        {% if errors.attachmentIssuer9 %}
+                            <span class="help-block">{{ errors.attachmentIssuer9 | first }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="input-group inline has-feedback{{ errors.attachmentIssueDate9 ? ' has-error' : '' }}" id="attachmentIssueDate9">
+                        <label for="attachmentIssueDate9">Issue Date: &nbsp;</label>
+                        <input type="date" id="attachmentIssueDate9" name="attachmentIssueDate9" value="{{ old.attachmentIssueDate9 ? old.attachmentIssueDate9 : '1999-12-31' }}"> &nbsp;
+                        {% if errors.attachmentIssueDate9 %}
+                            <span class="help-block">{{ errors.attachmentIssueDate9 | first }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="input-group inline has-feedback{{ errors.attachmentExpiryDate9 ? ' has-error' : '' }}" id="attachmentExpiryDate9">
+                        <label for="attachmentExpiryDate9">Expiry Date: &nbsp;</label>
+                        <input type="date" id="attachmentExpiryDate9" name="attachmentExpiryDate9" value="{{ old.attachmentExpiryDate9 ? old.attachmentExpiryDate9 : '2099-12-31' }}"> &nbsp;
+                        {% if errors.attachmentExpiryDate9 %}
+                            <span class="help-block">{{ errors.attachmentExpiryDate9 | first }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="form-group has-feedback{{ errors.visa ? ' has-error' : '' }}">
+                    <label for="inputvisa">Current Visa Status: &nbsp;</label><span class="text-red"><b>*</b></span>
+                <br/>
+
+                <label for="employee_residence">Employee Residency</label>
+                    <input type="radio" class="radio-inline" name="visa" id="employee_residence" value="Employee Residence" {% if old.visa == 'Employee Residence' %}checked="checked"{% endif %} /> &nbsp; &nbsp;
+                <label for="family_residence">Family Residency</label>
+                    <input type="radio" class="radio-inline" name="visa" id="family_residence" value="Family Residence" {% if old.visa == 'Family Residence' %}checked="checked"{% endif %} /> &nbsp; &nbsp;
+                <label for="visit">Visit Visa</label>
+                    <input type="radio" class="radio-inline" name="visa" id="visit" value="Visit" {% if old.visa == 'Visit' %}checked="checked"{% endif %} /> &nbsp; &nbsp;
+                <label for="tourist">Tourist Visa</label>
+                    <input type="radio" class="radio-inline" name="visa" id="tourist" value="Tourist" {% if old.visa == 'Tourist' %}checked="checked"{% endif %} /> &nbsp; &nbsp;
+                <label for="expired">Expired Visa</label>
+                    <input type="radio" class="radio-inline" name="visa" id="expired" value="Expired" {% if old.visa == 'Expired' %}checked="checked"{% endif %} /> &nbsp; &nbsp;
+
+                {#<label for="investor_residence">Investor Residency</label><input type="radio" class="radio-inline" name="visa" id="investor_residence" value="Investor Residence" {% if old.visa == 'Investor Residence' %}checked="checked"{% endif %} /> &nbsp; &nbsp;<label for="maid_residence">Maid Residency</label><input type="radio" class="radio-inline" name="visa" id="maid_residence" value="Maid Residence" {% if old.visa == 'Maid Residence' %}checked="checked"{% endif %} /> &nbsp; &nbsp;<label for="relative_residence">Investor Residency</label><input type="radio" class="radio-inline" name="visa" id="relative_residence" value="Relative Residence" {% if old.visa == 'Relative Residence' %}checked="checked"{% endif %} /> &nbsp; &nbsp;<label for="student_residence">Investor Residence</label><input type="radio" class="radio-inline" name="visa" id="student_residence" value="Student Residence" {% if old.visa == 'Student Residence' %}checked="checked"{% endif %} /> &nbsp; &nbsp;<label for="mission">Mission Visa</label><input type="radio" class="radio-inline" name="visa" id="mission" value="Mission" {% if old.visa == 'Mission' %}checked="checked"{% endif %} /> &nbsp; &nbsp;<label for="multiple_entry">Multiple Entry Visa</label><input type="radio" class="radio-inline" name="visa" id="multiple_entry" value="Multiple Entry" {% if old.visa == 'Multiple Entry' %}checked="checked"{% endif %} /> &nbsp; &nbsp;#}
+
+                {% if errors.visa %}
+                    <span class="help-block">{{ errors.visa | first }}</span>
+                {% endif %}
+            </div>
+            <br/>
+            <div class="form-group has-feedback{{ errors.visa_age ? ' has-error' : '' }}">
+                <label for="visa_age">Visa Age: &nbsp;</label><span class="text-red"><b>*</b></span>
+                <span class="help-block"><small><i>Time since the first issuance of visa from current employer</i></small></span>
+                <input type="text" class="form-control" name="visa_age" id="visa_age" placeholder="Two years ..." value="{{ old.visa_age ? old.visa_age : '' }}" />&nbsp;
+                {% if errors.visa_age %}
+                    <span class="help-block">{{ errors.visa_age | first }}</span>
+                {% endif %}
+            </div>
+            <div class="form-group has-feedback{{ errors.notice ? ' has-error' : '' }}">
+                <label for="notice">Required Notice Period:</label>
+                <input type="text" class="form-control" name="notice" id="notice" value="{{ old.notice ? old.notice : '' }}" placeholder="One month ..." />&nbsp;
+                {% if errors.notice %}
+                    <span class="help-block">{{ errors.notice | first }}</span>
+                {% endif %}
+            </div>
+            <div class="form-group has-feedback{{ errors.source ? ' has-error' : '' }}">
+                <label for="source">Application Source:  &nbsp;</label><span class="text-red"><b>*</b></span>
+                <p class="help-block"><small><i>How did the applicant hear about us</i></small></p>
+                <select class="form-control" name="source" id="source">
+                    <option value="" {% if old.source == '' %}selected{% endif %}>Please Select ...</option>
+                    <option value="HR Agency" {% if old.source == 'HR Agency' %}selected{% endif %}>HR Agency</option>
+                    <option value="Search Engine" {% if old.source == 'Search Engine' %}selected{% endif %}>Search Engine</option>
+                    <option value="Friend or Colleague" {% if old.source == 'Friend' %}selected{% endif %}>Friend</option>
+                    <option value="Other" {% if old.source == 'Other' %}selected{% endif %}>Other</option>
+                    <option value="No Answer" {% if old.source == 'No Answer' %}selected{% endif %}>No Answer</option>
+                </select>
+                {% if errors.source %}
+                    <span class="help-block">{{ errors.source | first }}</span>
+                {% endif %}
+            </div>
+            <div class="form-group has-feedback">
+                <input type="submit" name="submit" id="submitApplicant" onclick="saveApplicant()" value="Save & Continue"/>
+            </div>
+            {{ csrf.field | raw }}
+        {#</form>#}
+        </div>
+        <h3 style="background: #3c8dbc; border: #000000; ">Addresses</h3>
+        <div id="SEC2" class="register-box-body">
+            <div class="form-group has-feedback{{ errors.address_title ? ' has-error' : '' }}">
+                <label>Address Title: &nbsp; &nbsp;</label>
+                <br />
+
+                <div class="col-lg-4">
+                    <label>
+                        <input type="checkbox" name="home" id="home" {% if old.home == 'true' %}checked="checked"{% endif %} onclick="homeAddress()"/>&nbsp;
+                        <span class="fa fa-home"> Local Home Address&nbsp; &nbsp; </span>
+                    </label>
+                    <div id="homeAddress">
+                        <h4 id="homeAddressTTL">Local Home Address</h4>
+                        <div class="form-group has-feedback{{ errors.homeMobile ? ' has-error' : '' }}">
+                            <input type="tel" name="homeMobile" id="homeMobile" class="form-control" value="{{ old.homeMobile }}" placeholder="Telephone Number: Mobile"/>
+                            <span class="fa fa-mobile-phone form-control-feedback"></span>
+                            {% if errors.homeMobile %}
+                                <span class="help-block">{{ errors.homeMobile | first }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="form-group has-feedback{{ errors.homeCountry ? ' has-error' : '' }}">
+                            <select class="form-control" name="homeCountry" id="homeCountry" onchange="getStates(this, 'homeState')">
+                                <option>Please select a country...</option>
+                                {% for country in HR.countries %}
+                                    <option value="{{ country.id }}" {% if country.id == old.homeCountry %}selected{% endif %}>{{ country.country_name | e }}</option>
+                                {% endfor %}
+                            </select>
+                            {% if errors.homeCountry %}
+                                <span class="help-block">{{ errors.homeCountry | first }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="form-group has-feedback{{ errors.homeState ? ' has-error' : '' }}">
+                            <select class="form-control" name="homeState" id="homeState" onchange="getCities(this, 'homeCity')">
+                                <option>Please select a state...</option>
+                            </select>
+                            {% if errors.homeState %}
+                                <span class="help-block">{{ errors.homeState | first }}</span>
+                            {% endif %}
+                            <input type="hidden" name="homeState_selection" id="homeState_selection" value="{{ old.homeState_selection }}">
+                        </div>
+                        <div class="form-group has-feedback{{ errors.homeCity ? ' has-error' : '' }}">
+                            <select class="form-control" name="homeCity" id="homeCity" onchange="setCity(this)">
+                                <option>Please select a city...</option>
+                            </select>
+                            {% if errors.homeCity %}
+                                <span class="help-block">{{ errors.homeCity | first }}</span>
+                            {% endif %}
+                            <input type="hidden" name="homeCity_selection" id="homeCity_selection" value="{{ old.homeCity_selection }}">
+                        </div>
+                        <div class="form-group has-feedback{{ errors.homeArea ? ' has-error' : '' }}">
+                            <input type="text" name="homeArea" id="homeArea" class="form-control" value="{{ old.homeArea }}" onfocus="setCity()" placeholder="Please enter area name here">
+                            <span class="glyphicon glyphicon-map-marker form-control-feedback"></span>
+                            {% if errors.homeArea %}
+                                <span class="help-block">{{ errors.homeArea | first }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="form-group has-feedback{{ errors.homeStreetName ? ' has-error' : '' }}">
+                            <input type="text" name="homeStreetName" id="homeStreetName" class="form-control" value="{{ old.homeStreetName }}" placeholder="Street Name (optional)"/>
+                            <span class="glyphicon glyphicon-road form-control-feedback"></span>
+                            {% if errors.homeStreetName %}
+                                <span class="help-block">{{ errors.homeStreetName | first }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="form-group has-feedback{{ errors.homeStreetNumber ? ' has-error' : '' }}">
+                            <input type="text" name="homeStreetNumber" id="homeStreetNumber" class="form-control" value="{{ old.homeStreetNumber }}" placeholder="Street Number (optional)"/>
+                            <span class="glyphicon glyphicon-asterisk form-control-feedback"></span>
+                            {% if errors.homeStreetNumber %}
+                                <span class="help-block">{{ errors.homeStreetNumber | first }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="form-group has-feedback{{ errors.homeBuildingName ? ' has-error' : '' }}">
+                            <input type="text" name="homeBuildingName" id="homeBildingName" class="form-control" value="{{ old.homeBuildingName }}" placeholder="Building Name (optional)"/>
+                            <span class="fa fa-building form-control-feedback"></span>
+                            {% if errors.homeBuildingName %}
+                                <span class="help-block">{{ errors.homeBuildingName | first }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="form-group has-feedback{{ errors.homeBuildingNumber ? ' has-error' : '' }}">
+                            <input type="text" name="homeBuildingNumber" id="homeBuildingNumber" class="form-control" value="{{ old.homeBuildingNumber }}" placeholder="Building Number (optional)"/>
+                            <span class="glyphicon glyphicon-asterisk form-control-feedback"></span>
+                            {% if errors.homeBuildingNumber %}
+                                <span class="help-block">{{ errors.homeBuildingNumber | first }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="form-group has-feedback{{ errors.homeApartFloor ? ' has-error' : '' }}">
+                            <input type="text" name="homeApartFloor" id="homeApartFloor" class="form-control" value="{{ old.homeApartFloor }}" placeholder="Apartment & Floor Number (optional)"/>
+                            <span class="fa fa-home form-control-feedback"></span>
+                            {% if errors.homeApartFloor %}
+                                <span class="help-block">{{ errors.homeApartFloor | first }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="form-group has-feedback{{ errors.homePobox ? ' has-error' : '' }}">
+                            <input type="text" name="homePobox" id="homePobox" class="form-control" value="{{ old.homePobox }}" placeholder="P.O.Box & Registered City (optional)"/>
+                            <span class="fa fa-inbox form-control-feedback"></span>
+                            {% if errors.homePobox %}
+                                <span class="help-block">{{ errors.homePobox | first }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="form-group has-feedback{{ errors.homeLandline ? ' has-error' : '' }}">
+                            <input type="tel" name="homeLandline" id="homeLandline" class="form-control" value="{{ old.homeLandline }}" placeholder="Telephone Number: Land-line (optional)"/>
+                            <span class="fa fa-phone form-control-feedback"></span>
+                            {% if errors.homeLandline %}
+                                <span class="help-block">{{ errors.homeLandline | first }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="form-group has-feedback{{ errors.homeLandmark ? ' has-error' : '' }}">
+                            <input type="text" name="homeLandmark" id="homeLandmark" class="form-control" value="{{ old.homeLandmark }}" placeholder="Nearest Landmark (optional)"/>
+                            <span class="fa fa-bookmark form-control-feedback"></span>
+                            {% if errors.homeLandmark %}
+                                <span class="help-block">{{ errors.homeLandmark | first }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="form-group has-feedback{{ errors.homeNotes ? ' has-error' : '' }}">
+                            <textarea id="homeNotes" name="homeNotes" class="form-control" placeholder="Any additional notes (optional)">{{ old.homeNotes }}</textarea>
+                            <span class="fa fa-pencil form-control-feedback"></span>
+                            {% if errors.homeNotes %}
+                                <span class="help-block">{{ errors.homeNotes | first }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <label>
+                        <input type="checkbox" name="origin" id="origin" {% if old.origin == 'true' %}checked="checked"{% endif %} onclick="originAddress()" /> &nbsp;
+                        <span class="fa fa-plane"> Origin Country Address &nbsp; &nbsp; </span>
+                    </label>
+                    <div id="originAddress" aria-disabled="true">
+                        <h4 id="originAddressTTL">Origin Country Address</h4>
+                        <div class="form-group has-feedback{{ errors.originMobile ? ' has-error' : '' }}">
+                            <input type="tel" name="originMobile" id="originMobile" class="form-control" value="{{ old.originMobile }}" placeholder="Telephone Number: Mobile" required />
+                            <span class="fa fa-mobile-phone form-control-feedback"></span>
+                            {% if errors.originMobile %}
+                                <span class="help-block">{{ errors.originMobile | first }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="form-group has-feedback{{ errors.originCountry ? ' has-error' : '' }}">
+                            <select class="form-control" name="originCountry" id="originCountry" onchange="getStates(this, 'originState')" required>
+                                <option>Please select a country...</option>
+                                {% for country in HR.countries %}
+                                    <option value="{{ country.id }}" {% if country.id == old.originCountry %}selected{% endif %}>{{ country.country_name | e }}</option>
+                                {% endfor %}
+                            </select>
+                            {% if errors.originCountry %}
+                                <span class="help-block">{{ errors.originCountry | first }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="form-group has-feedback{{ errors.originState ? ' has-error' : '' }}">
+                            <select class="form-control" name="originState" id="originState" onchange="getCities(this, 'originCity')" required>
+                                <option>Please select a state...</option>
+                            </select>
+                            {% if errors.originState %}
+                                <span class="help-block">{{ errors.originState | first }}</span>
+                            {% endif %}
+                            <input type="hidden" name="originState_selection" id="originState_selection" value="{{ old.originState_selection }}">
+                        </div>
+                        <div class="form-group has-feedback{{ errors.originCity ? ' has-error' : '' }}">
+                            <select class="form-control" name="originCity" id="originCity" required onchange="setCity(this)">
+                                <option>Please select a city...</option>
+                            </select>
+                            {% if errors.originCity %}
+                                <span class="help-block">{{ errors.originCity | first }}</span>
+                            {% endif %}
+                            <input type="hidden" name="originCity_selection" id="originCity_selection" value="{{ old.originCity_selection }}">
+                        </div>
+                        <div class="form-group has-feedback{{ errors.originArea ? ' has-error' : '' }}">
+                            <input type="text" name="originArea" id="originArea" class="form-control" value="{{ old.originArea }}" onfocus="setCity()" placeholder="Please enter area name here" required />
+                            <span class="glyphicon glyphicon-map-marker form-control-feedback"></span>
+                            {% if errors.originArea %}
+                                <span class="help-block">{{ errors.originArea | first }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="form-group has-feedback{{ errors.originStreetName ? ' has-error' : '' }}">
+                            <input type="text" name="originStreetName" id="originStreetName" class="form-control" value="{{ old.originStreetName }}" placeholder="Street Name (optional)"/>
+                            <span class="glyphicon glyphicon-road form-control-feedback"></span>
+                            {% if errors.originStreetName %}
+                                <span class="help-block">{{ errors.originStreetName | first }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="form-group has-feedback{{ errors.originStreetNumber ? ' has-error' : '' }}">
+                            <input type="text" name="originStreetNumber" id="originStreetNumber" class="form-control" value="{{ old.originStreetNumber }}" placeholder="Street Number (optional)"/>
+                            <span class="glyphicon glyphicon-asterisk form-control-feedback"></span>
+                            {% if errors.originStreetNumber %}
+                                <span class="help-block">{{ errors.originStreetNumber | first }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="form-group has-feedback{{ errors.originBuildingName ? ' has-error' : '' }}">
+                            <input type="text" name="originBuildingName" id="originBuildingName" class="form-control" value="{{ old.originBuildingName }}" placeholder="Building Name (optional)"/>
+                            <span class="fa fa-building form-control-feedback"></span>
+                            {% if errors.originBuildingName %}
+                                <span class="help-block">{{ errors.originBuildingName | first }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="form-group has-feedback{{ errors.originBuildingNumber ? ' has-error' : '' }}">
+                            <input type="text" name="originBuildingNumber" id="originBuildingNumber" class="form-control" value="{{ old.originBuildingNumber }}" placeholder="Building Number (optional)"/>
+                            <span class="glyphicon glyphicon-asterisk form-control-feedback"></span>
+                            {% if errors.originBuildingNumber %}
+                                <span class="help-block">{{ errors.originBuildingNumber | first }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="form-group has-feedback{{ errors.originApartFloor ? ' has-error' : '' }}">
+                            <input type="text" name="originApartFloor" id="originApartFloor" class="form-control" value="{{ old.originApartFloor }}" placeholder="Apartment & Floor Number (optional)"/>
+                            <span class="fa fa-home form-control-feedback"></span>
+                            {% if errors.originApartFloor %}
+                                <span class="help-block">{{ errors.originApartFloor | first }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="form-group has-feedback{{ errors.originPobox ? ' has-error' : '' }}">
+                            <input type="text" name="originPobox" id="originPobox" class="form-control" value="{{ old.originPobox }}" placeholder="P.O.Box & Registered City (optional)"/>
+                            <span class="fa fa-inbox form-control-feedback"></span>
+                            {% if errors.originPobox %}
+                                <span class="help-block">{{ errors.originPobox | first }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="form-group has-feedback{{ errors.originLandmark ? ' has-error' : '' }}">
+                            <input type="text" name="originLandmark" id="originLandmark" class="form-control" value="{{ old.originLandmark }}" placeholder="Nearest Landmark (optional)"/>
+                            <span class="fa fa-bookmark form-control-feedback"></span>
+                            {% if errors.originLandmark %}
+                                <span class="help-block">{{ errors.originLandmark | first }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="form-group has-feedback{{ errors.originLandline ? ' has-error' : '' }}">
+                            <input type="tel" name="originLandline" id="originLandline" class="form-control" value="{{ old.originLandline }}" placeholder="Telephone Number: Landline (optional)"/>
+                            <span class="fa fa-phone form-control-feedback"></span>
+                            {% if errors.originLandline %}
+                                <span class="help-block">{{ errors.originLandline | first }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="form-group has-feedback{{ errors.originNotes ? ' has-error' : '' }}">
+                            <textarea id="originNotes" name="originNotes" class="form-control" placeholder="Any additional notes (optional)">{{ old.originNotes }}</textarea>
+                            <span class="fa fa-pencil form-control-feedback"></span>
+                            {% if errors.originNotes %}
+                                <span class="help-block">{{ errors.originNotes | first }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <label>
+                        <input type="checkbox" name="other" id="other" {% if old.other == 'true' %}checked="checked"{% endif %} onclick="otherAddress()" /> &nbsp;
+                        <span class="fa fa-building"> <input type="text" name="otherName" id="otherName" onkeyup="typeOtherAddress()" placeholder="Enter Address Title" value="{{ old.otherName ? old.otherName : '' }}" /> &nbsp; </span>
+                    </label>
+                    <div id="otherAddress">
+                        <h4 id="otherAddressTTL">Other Address</h4>
+                        <div class="form-group has-feedback{{ errors.otherMobile ? ' has-error' : '' }}">
+                            <input type="tel" name="otherMobile" id="otherMobile" class="form-control" value="{{ old.otherMobile }}" placeholder="Telephone Number: Mobile" required/>
+                            <span class="fa fa-mobile-phone form-control-feedback"></span>
+                            {% if errors.otherMobile %}
+                                <span class="help-block">{{ errors.otherMobile | first }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="form-group has-feedback{{ errors.otherCountry ? ' has-error' : '' }}">
+                            <select class="form-control" name="otherCountry" id="otherCountry" onchange="getStates(this, 'otherState')" required>
+                                <option>Please select a country...</option>
+                                {% for country in HR.countries %}
+                                    <option value="{{ country.id }}" {% if country.id == old.otherCountry %}selected{% endif %}>{{ country.country_name | e }}</option>
+                                {% endfor %}
+                            </select>
+                            {% if errors.otherCountry %}
+                                <span class="help-block">{{ errors.otherCountry | first }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="form-group has-feedback{{ errors.otherState ? ' has-error' : '' }}">
+                            <select class="form-control" name="otherState" id="otherState" onchange="getCities(this, 'otherCity')" required>
+                                <option>Please select a state...</option>
+                            </select>
+                            {% if errors.otherState %}
+                                <span class="help-block">{{ errors.otherState | first }}</span>
+                            {% endif %}
+                            <input type="hidden" name="otherState_selection" id="otherState_selection" value="{{ old.otherState_selection }}">
+                        </div>
+                        <div class="form-group has-feedback{{ errors.otherCity ? ' has-error' : '' }}">
+                            <select class="form-control" name="otherCity" id="otherCity" required onchange="setCity(this)">
+                                <option>Please select a city...</option>
+                            </select>
+                            {% if errors.otherCity %}
+                                <span class="help-block">{{ errors.otherCity | first }}</span>
+                            {% endif %}
+                            <input type="hidden" name="otherCity_selection" id="otherCity_selection" value="{{ old.otherCity_selection }}">
+                        </div>
+                        <div class="form-group has-feedback{{ errors.otherArea ? ' has-error' : '' }}">
+                            <input type="text" name="otherArea" id="otherArea" class="form-control" value="{{ old.otherArea }}" onfocus="setCity()" placeholder="Please enter area name here" required>
+                            <span class="glyphicon glyphicon-map-marker form-control-feedback"></span>
+                            {% if errors.otherArea %}
+                                <span class="help-block">{{ errors.otherArea | first }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="form-group has-feedback{{ errors.otherStreetName ? ' has-error' : '' }}">
+                            <input type="text" name="otherStreetName" id="otherStreetName" class="form-control" value="{{ old.otherStreetName }}" placeholder="Street Name (optional)"/>
+                            <span class="glyphicon glyphicon-road form-control-feedback"></span>
+                            {% if errors.otherStreetName %}
+                                <span class="help-block">{{ errors.otherStreetName | first }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="form-group has-feedback{{ errors.otherStreetNumber ? ' has-error' : '' }}">
+                            <input type="text" name="otherStreetNumber" id="otherStreetNumber" class="form-control" value="{{ old.otherStreetNumber }}" placeholder="Street Number (optional)"/>
+                            <span class="glyphicon glyphicon-asterisk form-control-feedback"></span>
+                            {% if errors.otherStreetNumber %}
+                                <span class="help-block">{{ errors.otherStreetNumber | first }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="form-group has-feedback{{ errors.otherBuildingName ? ' has-error' : '' }}">
+                            <input type="text" name="otherBuildingName" id="otherBuildingName" class="form-control" value="{{ old.otherBuildingName }}" placeholder="Building Name (optional)"/>
+                            <span class="fa fa-building form-control-feedback"></span>
+                            {% if errors.otherBuildingName %}
+                                <span class="help-block">{{ errors.otherBuildingName | first }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="form-group has-feedback{{ errors.otherBuildingNumber ? ' has-error' : '' }}">
+                            <input type="text" name="otherBuildingNumber" id="otherBuildingNumber" class="form-control" value="{{ old.otherBuildingNumber }}" placeholder="Building Number (optional)"/>
+                            <span class="glyphicon glyphicon-asterisk form-control-feedback"></span>
+                            {% if errors.otherBuildingNumber %}
+                                <span class="help-block">{{ errors.otherBuildingNumber | first }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="form-group has-feedback{{ errors.otherApartFloor ? ' has-error' : '' }}">
+                            <input type="text" name="otherApartFloor" id="otherApartFloor" class="form-control" value="{{ old.otherApartFloor }}" placeholder="Apartment & Floor Number (optional)"/>
+                            <span class="fa fa-home form-control-feedback"></span>
+                            {% if errors.otherApartFloor %}
+                                <span class="help-block">{{ errors.otherApartFloor | first }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="form-group has-feedback{{ errors.otherPobox ? ' has-error' : '' }}">
+                            <input type="text" name="otherPobox" id="otherPobox" class="form-control" value="{{ old.otherPobox }}" placeholder="P.O.Box & Registered City (optional)"/>
+                            <span class="fa fa-inbox form-control-feedback"></span>
+                            {% if errors.otherPobox %}
+                                <span class="help-block">{{ errors.otherPobox | first }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="form-group has-feedback{{ errors.otherLandmark ? ' has-error' : '' }}">
+                            <input type="text" name="otherLandmark" id="otherLandmark" class="form-control" value="{{ old.otherLandmark }}" placeholder="Nearest Landmark (optional)"/>
+                            <span class="fa fa-bookmark form-control-feedback"></span>
+                            {% if errors.otherLandmark %}
+                                <span class="help-block">{{ errors.otherLandmark | first }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="form-group has-feedback{{ errors.otherLandline ? ' has-error' : '' }}">
+                            <input type="tel" name="otherLandline" id="otherLandline" class="form-control" value="{{ old.otherLandline }}" placeholder="Telephone Number: Landline (optional)"/>
+                            <span class="fa fa-phone form-control-feedback"></span>
+                            {% if errors.otherLandline %}
+                                <span class="help-block">{{ errors.otherLandline | first }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="form-group has-feedback{{ errors.otherNotes ? ' has-error' : '' }}">
+                            <textarea id="otherNotes" name="otherNotes" class="form-control" placeholder="Any additional notes (optional)">{{ old.otherNotes }}</textarea>
+                            <span class="fa fa-pencil form-control-feedback"></span>
+                            {% if errors.otherNotes %}
+                                <span class="help-block">{{ errors.otherNotes | first }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% if errors.address_title %}
+                    <span class="help-block">{{ errors.address_title | first }}</span>
+                {% endif %}
+
+            </div>
+
+
+        </div>
+        <h3 style="background: #3c8dbc; border: #000000; ">Profissional Experiences</h3>
+        <div id="SEC3" class="register-box-body">
+            {# TODO: add a button to add & remove experience up to 10 #}
+            {# beginning of new job experience #}
+            <div id="newJobExperience" class="form-group">
+                <label for="help-experience">Job Experiences:</label>
+                <p class="help-block" id="help-experience"><span><i>Add profissional experiences and their details</i></span></p>
+                <input type="hidden" id="experienceCounter" name="experienceCounter" value="-1">
+                <input type="button" id="add" class="btn btn-xs" onclick="showInput('divExperienceGroup', 'experienceCounter')" value="Add New" title="Add new experience record"/>
+                <input type="button" id="remove" class="btn btn-xs btn-danger" onclick="hideInput('divExperienceGroup', 'experienceCounter')" value="Remove" title="Removes the last experience record" />
+                <br />
+
+                <div class="form-group bg-gray-light hidden has-feedback" id="divExperienceGroup0" >
+                    <h3 id="experienceTitle0">Job 1</h3>
+                    <div class="col-lg-6">
+                        <div class="form-group has-feedback{{ errors.experienceCountry0 ? ' has-error' : '' }}">
+                            <select class="form-control" name="experienceCountry0" id="experienceCountry0" onchange="getStates(this, 'experienceState0')">
+                                <option>Please select a country...</option>
+                                {% for country in HR.countries %}
+                                    <option value="{{ country.id }}" {% if country.id == old.experienceCountry0 %}selected{% endif %}>{{ country.country_name | e }}</option>
+                                {% endfor %}
+                            </select>
+                            {% if errors.experienceCountry0 %}
+                                <span class="help-block">{{ errors.experienceCountry0 | first }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="form-group has-feedback{{ errors.experienceState0 ? ' has-error' : '' }}">
+                            <select class="form-control" name="experienceState0" id="experienceState0" onchange="getCities(this, 'experienceCity0')">
+                                <option>Please select a state...</option>
+                            </select>
+                            {% if errors.experienceState0 %}
+                                <span class="help-block">{{ errors.experienceState0 | first }}</span>
+                            {% endif %}
+                            <input type="hidden" name="experienceState0_selection" id="experienceState0_selection" value="{{ old.experienceState0_selection }}">
+                        </div>
+                        <div class="form-group has-feedback{{ errors.experienceCity0 ? ' has-error' : '' }}">
+                            <select class="form-control" name="experienceCity0" id="experienceCity0" onchange="setCity(this)">
+                                <option>Please select a city...</option>
+                            </select>
+                            {% if errors.experienceCity0 %}
+                                <span class="help-block">{{ errors.experienceCity0 | first }}</span>
+                            {% endif %}
+                            <input type="hidden" name="experienceCity0_selection" id="experienceCity0_selection" value="{{ old.experienceCity0_selection }}">
+                        </div>
+                        <div class="form-group has-feedback{{ errors.jobTitle0 ? ' has-error' : '' }}">
+                            <label for="jobTitle0">Job Title: &nbsp;</label><span class="text-red"><b>*</b></span>
+                            <input type="text" name="jobTitle0" id="jobTitle0" class="form-control" value="{{ old.jobTitle0 }}" placeholder="Job Title..." required >
+                            <span class="glyphicon glyphicon-user form-control-feedback"></span>
+                            {% if errors.jobTitle0 %}
+                                <span class="help-block">{{ errors.jobTitle0 | first }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="form-group has-feedback{{ errors.company0 ? ' has-error' : '' }}">
+                            <label for="company0">Company Name: &nbsp;</label><span class="text-red"><b>*</b></span>
+                            <input type="text" name="company0" id="company0" class="form-control" value="{{ old.company0 }}" placeholder="Company Name..." required />
+                            <span class="glyphicon glyphicon-exclamation-sign form-control-feedback"></span>
+                            {% if errors.company0 %}
+                                <span class="help-block">{{ errors.company0 | first }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="form-group has-feedback{{ errors.jobFromDate0 ? ' has-error' : '' }}">
+                            <label for="jobFromDate0">From Date: &nbsp;</label>
+                            <input type="date" name="jobFromDate0" id="jobFromDate0" class="form-control" value="{{ old.jobFromDate0 }}" required/> &nbsp; &nbsp;
+                            {% if errors.jobFromDate0 %}
+                                <span class="help-block">{{ errors.jobFromDate0 | first }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="form-group has-feedback{{ errors.jobToDate0 ? ' has-error' : '' }}">
+                            <label for="jobFromDate0">To Date: &nbsp;</label>
+                            <input type="date" name="jobToDate0" id="jobToDate0" class="form-control" value="{{ old.jobToDate0 }}" required/>  &nbsp; &nbsp;
+                            {% if errors.jobToDate0 %}
+                                <span class="help-block">{{ errors.jobToDate0 | first }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group has-feedback {{ errors.jobDetails0 ? ' has-error' : '' }}">
+                            <label for="jobDetails0">Details: &nbsp;</label>
+                            <textarea id="jobDetails0" name="jobDetails0" placeholder="Copy & Paste or type in the detials here..." class="form-control" rows="20"></textarea>
+                            {% if errors.jobDetails0 %}
+                                <span class="help-block">{{ errors.jobDetails0 | first }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</form>
+    {#<h3 style="background: black; border: #3c8dbc;>Details about this form goes here</h3>#}
+    {#<div id="SEC3" class="register-box-body">#}
+        {#<form action="{{ path_for('HR.NewSkill') }}" method="post" autocomplete="on" enctype="multipart/form-data">#}
+            {#&#123;&#35; TODO: decide on this form details &#35;&#125;#}
+            {#<div class="form-group has-feedback{{ errors. ? ' has-error' : '' }}">#}
+                {#<input type="text" name="" id="" class="form-control" value="{{ old. }}" placeholder=""/>#}
+                {#<span class="glyphicon glyphicon-asterisk form-control-feedback"></span>#}
+                {#{% if errors. %}#}
+                    {#<span class="help-block">{{ errors. | first }}</span>#}
+                {#{% endif %}#}
+            {#</div>#}
+        {#</form>#}
+    {#</div>#}
+{#</div>#}
+
+{% endblock %}

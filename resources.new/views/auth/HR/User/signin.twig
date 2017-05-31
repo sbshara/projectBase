@@ -1,0 +1,75 @@
+{% extends 'templates/app.twig' %}
+{% block title %}Sign in{% endblock %}
+
+{% block bodyTags %}
+    hold-transition skin-blue sidebar-collapse sidebar-mini
+{% endblock %}
+
+{% block contents %}
+<section class="content">
+    <div class="login-box">
+        <div class="login-logo">
+            <a href="{{ base_url() }}"><b>MENA</b> Assistance</a>
+        </div>
+        <!-- /.login-logo -->
+        <div class="login-box-body">
+            <p class="login-box-msg">Sign in to start your session</p>
+            <form action="{{ path_for('auth.Signin') }}" method="post" autocomplete="off">
+                <div class="form-group has-feedback{{ errors.username ? ' has-error' : '' }}">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Username" name="username" id="username" value="{{ old.username }}">
+                        <span class="input-group-addon">@menaa.local</span>
+                    </div>
+                    {#<span class="glyphicon glyphicon-user form-control-feedback"></span>#}
+                    {% if errors.username %}
+                        <span class="help-block">{{ errors.username | first }}</span>
+                    {% endif %}
+                </div>
+                <div class="form-group has-feedback{{ errors.password ? ' has-error' : '' }}">
+                    <input type="password" class="form-control" placeholder="Password" name="password" id="password">
+                    <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+                    {% if errors.password %}
+                        <span class="help-block">{{ errors.password | first }}</span>
+                    {% endif %}
+                </div>
+                <div class="form-group has-feedback">
+                    <div class="col-xs-8">
+                        <div class="checkbox icheck">
+                            <label>
+                                <input type="checkbox"> Remember Me
+                            </label>
+                        </div>
+                    </div>
+                    <!-- /.col -->
+                    <div class="col-xs-4">
+                        <button type="submit" name="submit" id="submit" class="btn btn-primary btn-block btn-flat">Sign In</button>
+                    </div>
+                    {{ csrf.field | raw }}
+                    <!-- /.col -->
+                </div>
+            </form>
+            <p> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</p>
+            <a href="#" class="text-center">I Forgot my password</a>
+            {#<div class="social-auth-links text-center">#}
+                {#<p>- OR -</p>#}
+                {#<a href="#" class="btn btn-block btn-social btn-facebook btn-flat"><i class="fa fa-facebook"></i> Sign in using#}
+                    {#Facebook</a>#}
+                {#<a href="#" class="btn btn-block btn-social btn-google btn-flat"><i class="fa fa-google-plus"></i> Sign in using#}
+                    {#Google+</a>#}
+            {#</div>#}
+            <!-- /.social-auth-links -->
+        </div>
+        <!-- /.login-box-body -->
+    </div>
+    <!-- /.login-box -->
+
+<script>
+//        $(function () {
+//            $('input').iCheck({
+//                checkboxClass: 'icheckbox_square-blue',
+//                radioClass: 'iradio_square-blue',
+//                increaseArea: '20%' // optional
+//            });
+//        });
+</script>
+{% endblock %}

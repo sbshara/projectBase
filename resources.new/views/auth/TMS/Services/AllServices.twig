@@ -1,0 +1,54 @@
+{% extends 'templates/app.twig' %}
+
+{% block title %}TMS - All Services{% endblock %}
+
+{% block contents %}
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <h1>
+            All Service & Maintenance Records
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href="{{ base_url() }}"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li><a href="{{ path_for('TMS.Home') }}">TMS</a></li>
+            <li class="active">All Services</li>
+        </ol>
+    </section>
+    <!-- Main content -->
+    <section class="content">
+        <div class="col-xs-12 table-responsive">
+            <div class="box">
+                <div class="box-header">
+                    <h3 class="box-title">Service & Maintenance Records</h3>
+                </div>
+                <div class="box-body">
+                    <table id="allServices" class="table table-responsive table-striped table-hover table-bordered">
+                        <thead>
+                        <tr>
+                            <th>Service ID</th>
+                            <th>Truck / Vehicle</th>
+                            <th>Mileage</th>
+                            <th>Service Category</th>
+                            <th>Date</th>
+                            <th>Cost</th>
+                            <th>User</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for service in services %}
+                            <tr>
+                                <td><a href="{{ path_for('TMS.ServiceById', {'id':service.id}) }}">=> {{ service.id }}</a></td>
+                                <td>{{ service.vehicleName() }}</td>
+                                <td>{{ service.service_mileage }}</td>
+                                <td>{{ service.categoryName() }}</td>
+                                <td>{{ service.service_date_start }}</td>
+                                <td>{{ service.cost }}</td>
+                                <td>{{ service.serviceUser() | e }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+{% endblock %}

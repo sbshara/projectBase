@@ -1,0 +1,177 @@
+{% extends 'templates/app.twig' %}
+
+{% block title %}Projects - New Project{% endblock %}
+
+{% block contents %}
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <h1>
+            New Project
+            <small>please fill out the below to create a new project</small>
+        </h1>
+        <!--GUIDANCE MAPPER (TOP RIGHT)-->
+        <ol class="breadcrumb">
+            <li><a href="{{ path_for('home') }}"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li><a href="{{ path_for('PRO.Home') }}"><i class="fa fa-briefcase"></i> Projects Home</a></li>
+            <li class="active">New Project</li>
+        </ol>
+        <!--END OF GUIDANCE MAPPER-->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+
+        <form method="post" action="{{ path_for('PRO.NewProject') }}" autocomplete="on" enctype="multipart/form-data">
+            {{ csrf.field | raw }}
+            <div class="form-group has-feedback{{ errors.shortname ? ' has-error' : '' }}">
+                <label for="shortname">Project Name (Short): </label><span class="text-red"><b>*</b></span>
+                <input type="text" name="shortname" id="shortname" class="form-control" value="{{ old.shortname }}" placeholder="Project short name">
+                {#<span class="glyphicon glyphicon-briefcase form-control-feedback"></span>#}
+                {% if errors.shortname %}
+                    <span class="help-block">{{ errors.shortname | first }}</span>
+                {% endif %}
+            </div>
+            <div class="form-group has-feedback{{ errors.name ? ' has-error' : '' }}">
+                <label for="name">Project Name (Full): </label><span class="text-red"><b>*</b></span>
+                <input type="text" name="name" id="name" class="form-control" value="{{ old.name }}" placeholder="Project full name">
+                {#<span class="glyphicon glyphicon-briefcase form-control-feedback"></span>#}
+                {% if errors.name %}
+                    <span class="help-block">{{ errors.name | first }}</span>
+                {% endif %}
+            </div>
+            <div class="form-group has-feedback{{ errors.number ? ' has-error' : '' }}">
+                <label for="number">Project Reference Number: </label>
+                <input type="text" name="number" id="number" class="form-control" value="{{ old.number }}" placeholder="Project Number">
+                {#<span class="glyphicon glyphicon-briefcase form-control-feedback"></span>#}
+                {% if errors.number %}
+                    <span class="help-block">{{ errors.number | first }}</span>
+                {% endif %}
+            </div>
+            <div class="form-group has-feedback{{ errors.description ? ' has-error' : '' }}">
+                <label for="description">Project Description: </label>
+                <textarea id="description" name="description" class="form-control" rows="5">{{ old.description ?: 'Describe the project...' }}</textarea>
+                {#<span class="glyphicon glyphicon-briefcase form-control-feedback"></span>#}
+                {% if errors.description %}
+                    <span class="help-block">{{ errors.description | first }}</span>
+                {% endif %}
+            </div>
+            <div class="form-group has-feedback{{ errors.startdate ? ' has-error' : '' }}">
+                <label for="startdate">Project Start Date: </label><span class="text-red"><b>*</b></span>
+                <div class="input-group date">
+                    <div class="input-group-addon">
+                        <i class="fa fa-calendar"></i>
+                    </div>
+                    <input type="date" class="form-control pull-right date-picker" name="startdate" id="startdate" value="{{ old.startdate ?: '2017-01-01' }}">
+                </div>
+                {% if errors.startdate %}
+                    <span class="help-block">{{ errors.startdate | first }}</span>
+                {% endif %}
+            </div>
+            <div class="form-group has-feedback{{ errors.targetenddate ? ' has-error' : '' }}">
+                <label for="targetenddate">Project Targeted End Date: </label><span class="text-red"><b>*</b></span>
+                <div class="input-group date">
+                    <div class="input-group-addon">
+                        <i class="fa fa-calendar"></i>
+                    </div>
+                    <input type="date" class="form-control pull-right date-picker" name="targetenddate" id="targetenddate" value="{{ old.targetenddate ?: '2018-01-01' }}">
+                </div>
+                {% if errors.targetenddate %}
+                    <span class="help-block">{{ errors.targetenddate | first }}</span>
+                {% endif %}
+            </div>
+            <div class="form-group has-feedback{{ errors.actualenddate ? ' has-error' : '' }}">
+                <label for="actualenddate">Project Actual End Date: </label>
+                <div class="input-group date">
+                    <div class="input-group-addon">
+                        <i class="fa fa-calendar"></i>
+                    </div>
+                    <input type="date" class="form-control pull-right date-picker" name="actualenddate" id="actualenddate" value="{{ old.actualenddate ?: '2019-01-01' }}">
+                </div>
+                {% if errors.actualenddate %}
+                    <span class="help-block">{{ errors.actualenddate | first }}</span>
+                {% endif %}
+            </div>
+            <div class="form-group has-feedback{{ errors.targetbudget ? ' has-error' : '' }}">
+                <label for="targetbudget">Project Targeted Budget: </label>
+                <div class="input-group has-feedback">
+                    <span class="input-group-addon">AED</span>
+                    <input type="text" name="targetbudget" id="targetbudget" class="form-control" value="{{ old.targetbudget }}" placeholder="Project Targeted Budget">
+                    <span class="input-group-addon">.00</span>
+                </div>
+                {#<span class="glyphicon glyphicon-briefcase form-control-feedback"></span>#}
+                {% if errors.targetbudget %}
+                    <span class="help-block">{{ errors.targetbudget | first }}</span>
+                {% endif %}
+            </div>
+            <div class="form-group has-feedback{{ errors.status ? ' has-error' : '' }}">
+                <label for="status">Project Status: </label>
+                <select name="status" id="status" class="form-control">
+                    {% for status in OPS.ProjectStatus %}
+                        <option value="{{ status.id }}" {% if old.status == status.id %}selected{% endif %}>{{ status.statusname | e }}</option>
+                    {% endfor %}
+                </select>
+                {% if errors.status %}
+                    <span class="help-block">{{ errors.status | first }}</span>
+                {% endif %}
+            </div>
+            <div class="form-group has-feedback{{ errors.priority ? ' has-error' : '' }}">
+                <label for="priority">Project Priority: </label>
+                <select class="form-control" name="priority" id="priority">
+                    <option value="Low" {% if old.priority == 'Low' %}selected{% endif %}>Low (!)</option>
+                    <option value="Normal" {% if old.priority == 'Normal' %}selected{% endif %}>Normal (!!)</option>
+                    <option value="High" {% if old.priority == 'High' %}selected{% endif %}>High (!!!)</option>
+                </select>
+                {% if errors.priority %}
+                    <span class="help-block">{{ errors.priority | first }}</span>
+                {% endif %}
+            </div>
+            <div class="form-group has-feedback{{ errors.type ? ' has-error' : '' }}">
+                <label for="type">Project Type: </label>
+                <select name="type" id="type" class="form-control">
+                    <option value="Adminstrative">Admistrative</option>
+                    <option value="Operational">Operational</option>
+                    <option value="Other">Other</option>
+                </select>
+                {% if errors.type %}
+                    <span class="help-block">{{ errors.type | first }}</span>
+                {% endif %}
+            </div>
+            <div class="form-group has-feedback{{ errors.progress ? ' has-error' : '' }}">
+                <label for="progress">Project Progress</label>
+                <select name="progress" id="progress" class="form-control" onchange="updateProgressBar(this)">
+                    <option value="0%">0%</option>
+                    <option value="10%">10%</option>
+                    <option value="20%">20%</option>
+                    <option value="30%">30%</option>
+                    <option value="40%">40%</option>
+                    <option value="50%">50%</option>
+                    <option value="60%">60%</option>
+                    <option value="70%">70%</option>
+                    <option value="80%">80%</option>
+                    <option value="90%">90%</option>
+                    <option value="100%">100%</option>
+                </select>
+                <div class="progress">
+                    <div
+                            class="progress-bar progress-bar-primary progress-bar-striped"
+                            role="progressbar"
+                            aria-valuenow="0%"
+                            aria-valuemin="0%"
+                            aria-valuemax="100%"
+                            style="width: 0%"
+                            id="progressBar">
+                    </div>
+                </div>
+                {% if errors.progress %}
+                    <span class="help-block">{{ errors.progress | first }}</span>
+                {% endif %}
+            </div>
+
+            <div class="form-group has-feedback">
+                <button type="submit" name="submit" id="submit" class="btn btn-primary">Create New Project</button>
+            </div>
+        </form>
+    </section>
+    <!-- /.content -->
+    </div>
+{% endblock %}

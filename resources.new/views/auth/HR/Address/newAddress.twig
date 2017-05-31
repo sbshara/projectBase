@@ -1,0 +1,185 @@
+{% extends 'templates/app.twig' %}
+{% block title %}New Address{% endblock %}
+
+{% block bodyTags %}
+    hold-transition skin-blue sidebar-collapse sidebar-mini
+{% endblock %}
+
+
+{% block contents %}
+<section class="content" xmlns="http://www.w3.org/1999/html">
+        <div class="raw">
+            <div class="register-logo">
+                <a href="{{ base_url() }}"><b>MENA</b> Assistance</a>
+            </div>
+            <div class="register-box-body">
+                <p class="login-box-msg">Add a new address</p>
+                <form action="{{ path_for('HR.NewAddress') }}" method="post" autocomplete="on" enctype="multipart/form-data" >
+                    <div class="form-group has-feedback{{ errors.applicant ? ' has-error' : '' }}{{ errors.applicantid ? ' has-error' : '' }}">
+                        <input type="text" id="applicant" name="applicant" class="form-control" value="{{ old.applicant }}" onchange="getApplicantName(this)" placeholder="Start typing appplicant's name..." />
+                        <input type="hidden" id="applicantid" name="applicantid" value="{{ old.applicantid }}"/>
+                        <div id="name-guide" class="help-block"></div>
+                        <span class="glyphicon glyphicon-user form-control-feedback"></span>
+                        {% if errors.applicant %}
+                            <span class="help-block">{{ errors.applicant | first }}</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group has-feedback{{ errors.address_title ? ' has-error' : '' }}">
+                        <label>Address Title: &nbsp; &nbsp;</label>
+                        <label>
+                            <input type="radio" name="address_title" id="home" value="Home" {% if old.address_title == 'home' %}checked="checked"{% endif %}/>&nbsp;
+                            <span class="fa fa-home"> Local Home Address&nbsp; &nbsp; </span>
+                        </label>
+                        <label>
+                            <input type="radio" name="address_title" id="work" value="Work" {% if old.address_title == 'work' %}checked="checked"{% endif %}/> &nbsp;
+                            <span class="fa fa-plane"> Origin Country Address &nbsp; &nbsp; </span>
+                        </label>
+
+                        {% if errors.address_title %}
+                            <span class="help-block">{{ errors.address_title | first }}</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group has-feedback{{ errors.mobile ? ' has-error' : '' }}">
+                        <input type="tel" name="mobile" id="mobile" class="form-control" value="{{ old.mobile }}" placeholder="Telephone Number: Mobile"/>
+                        <span class="fa fa-mobile-phone form-control-feedback"></span>
+                        {% if errors.mobile %}
+                            <span class="help-block">{{ errors.mobile | first }}</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group has-feedback{{ errors.country ? ' has-error' : '' }}">
+                        <select class="form-control" name="country" id="country" onchange="getStates(this)">
+                            <option>Please select a country...</option>
+                            {% for country in HR.countries %}
+                                <option value="{{ country.id }}" {% if country.id == old.country %}selected{% endif %}>{{ country.country_name | e }}</option>
+                            {% endfor %}
+                        </select>
+                        {% if errors.country %}
+                            <span class="help-block">{{ errors.country | first }}</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group has-feedback{{ errors.state ? ' has-error' : '' }}">
+                        <select class="form-control" name="state" id="state" onchange="getCities(this)">
+                            <option>Please select a state...</option>
+                        </select>
+                        {% if errors.state %}
+                            <span class="help-block">{{ errors.state | first }}</span>
+                        {% endif %}
+                        <input type="hidden" name="state_selection" id="state_selection" value="{{ old.state }}">
+                    </div>
+
+                    <div class="form-group has-feedback{{ errors.city ? ' has-error' : '' }}">
+                        <select class="form-control" name="city" id="city">
+                            <option>Please select a city...</option>
+                        </select>
+                        {% if errors.city %}
+                            <span class="help-block">{{ errors.city | first }}</span>
+                        {% endif %}
+                        <input type="hidden" name="city_selection" id="city_selection" value="{{ old.city }}">
+                    </div>
+
+                    <div class="form-group has-feedback{{ errors.area ? ' has-error' : '' }}">
+                        <input type="text" name="area" id="area" class="form-control" value="{{ old.area }}" onfocus="setCity()" placeholder="Please enter area name here">
+                        <span class="glyphicon glyphicon-map-marker form-control-feedback"></span>
+                        {% if errors.area %}
+                            <span class="help-block">{{ errors.area | first }}</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group has-feedback{{ errors.streetName ? ' has-error' : '' }}">
+                        <input type="text" name="streetName" id="streetName" class="form-control" value="{{ old.streetName }}" placeholder="Street Name (optional)"/>
+                        <span class="glyphicon glyphicon-road form-control-feedback"></span>
+                        {% if errors.streetName %}
+                            <span class="help-block">{{ errors.streetName | first }}</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group has-feedback{{ errors.streetNumber ? ' has-error' : '' }}">
+                        <input type="text" name="streetNumber" id="streetNumber" class="form-control" value="{{ old.streetNumber }}" placeholder="Street Number (optional)"/>
+                        <span class="glyphicon glyphicon-asterisk form-control-feedback"></span>
+                        {% if errors.streetNumber %}
+                            <span class="help-block">{{ errors.streetNumber | first }}</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group has-feedback{{ errors.buildingName ? ' has-error' : '' }}">
+                        <input type="text" name="buildingName" id="buildingName" class="form-control" value="{{ old.buildingName }}" placeholder="Building Name (optional)"/>
+                        <span class="fa fa-building form-control-feedback"></span>
+                        {% if errors.buildingName %}
+                            <span class="help-block">{{ errors.buildingName | first }}</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group has-feedback{{ errors.buildingNumber ? ' has-error' : '' }}">
+                        <input type="text" name="buildingNumber" id="buildingNumber" class="form-control" value="{{ old.buildingNumber }}" placeholder="Building Number (optional)"/>
+                        <span class="glyphicon glyphicon-asterisk form-control-feedback"></span>
+                        {% if errors.buildingNumber %}
+                            <span class="help-block">{{ errors.buildingNumber | first }}</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group has-feedback{{ errors.apartFloor ? ' has-error' : '' }}">
+                        <input type="text" name="apartFloor" id="apartFloor" class="form-control" value="{{ old.apartFloor }}" placeholder="Apartment & Floor Number (optional)"/>
+                        <span class="fa fa-home form-control-feedback"></span>
+                        {% if errors.apartmentFloor %}
+                            <span class="help-block">{{ errors.apartmentFloor | first }}</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group has-feedback{{ errors.pobox ? ' has-error' : '' }}">
+                        <input type="text" name="pobox" id="pobox" class="form-control" value="{{ old.pobox }}" placeholder="P.O.Box & Registered City (optional)"/>
+                        <span class="fa fa-inbox form-control-feedback"></span>
+                        {% if errors.pobox %}
+                            <span class="help-block">{{ errors.pobox | first }}</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group has-feedback{{ errors.landmark ? ' has-error' : '' }}">
+                        <input type="text" name="landmark" id="landmark" class="form-control" value="{{ old.landmark }}" placeholder="Nearest Landmark (optional)"/>
+                        <span class="fa fa-bookmark form-control-feedback"></span>
+                        {% if errors.landmark %}
+                            <span class="help-block">{{ errors.landmark | first }}</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group has-feedback{{ errors.landline ? ' has-error' : '' }}">
+                        <input type="tel" name="landline" id="landline" class="form-control" value="{{ old.landline }}" placeholder="Telephone Number: Landline (optional)"/>
+                        <span class="fa fa-phone form-control-feedback"></span>
+                        {% if errors.landline %}
+                            <span class="help-block">{{ errors.landline | first }}</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group has-feedback{{ errors.notes ? ' has-error' : '' }}">
+                        <textarea id="notes" name="notes" class="form-control" placeholder="Any additional notes (optional)">{{ old.notes }}</textarea>
+                        <span class="fa fa-pencil form-control-feedback"></span>
+                        {% if errors.notes %}
+                            <span class="help-block">{{ errors.notes | first }}</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group has-feedback{{ errors.nextstep ? ' has-error' : '' }}">
+                        <label for="nextstep">Next Step:  &nbsp;</label>
+                        <select class="form-control" name="nextstep" id="nextstep">
+                            <option value="" {% if old.nextstep == '' %}selected{% endif %}>Please Select ...</option>
+                            <option value="newAddress" {% if old.nextstep == 'newAddress' %}selected{% endif %}>Add New Address</option>
+                            <option value="skill" {% if old.nextstep == 'skill' %}selected{% endif %}>Applicant skills</option>
+                            <option value="degree" {% if old.nextstep == 'education' %}selected{% endif %}>Applicant educational degrees</option>
+                            <option value="experience" {% if old.nextstep == 'experience' %}selected{% endif %}>Applicant experiences</option>
+                            <option value="interview" {% if old.nextstep == 'interview' %}selected{% endif %}>Schedule an interview</option>
+                            <option value="home" {% if old.nextstep == 'home' %}selected{% endif %} title="Not Recommended!">Go to home page</option>
+                        </select>
+                        {% if errors.nextstep %}
+                            <span class="help-block">{{ errors.nextstep | first }}</span>
+                        {% endif %}
+                    </div>
+
+                    <button type="submit" name="submit" id="submit"class="btn btn-default">Save Address Details</button>
+                    {{ csrf.field | raw }}
+                </form>
+            </div>
+        </div>
+{% endblock %}

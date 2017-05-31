@@ -1,0 +1,199 @@
+{% extends 'templates/app.twig' %}
+
+{% block title %}Assets & Resources - New Truck Registration{% endblock %}
+
+{% block contents %}
+    <section class="content">
+        <div class="raw">
+            <div class="register-logo">
+                <a href="{{ base_url() }}"><b>MENA</b> Assistance</a>
+            </div>
+            <div class="register-box-body">
+                <p class="login-box-msg">Register a new Vehicle</p>
+                <form action="{{ path_for('OPS.Assets.NewTruck') }}" method="post" autocomplete="on" enctype="multipart/form-data" >
+                    {{ csrf.field | raw }}
+                    <div class="form-group has-feedback{{ errors.vin ? ' has-error' : '' }}">
+                        <label for="vin">VIN (Chassis): &nbsp;</label>
+                        <input type="text" name="vin" id="vin" class="form-control" placeholder="1AA2BBCC3DD456789" maxlength="17" value="{{ old.vin ?: '' }}"/>
+                        {% if errors.vin %}
+                            <span class="help-block">{{ errors.vin | first }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="form-group has-feedback{{ errors.brand ? ' has-error' : '' }}">
+                        <label for="brand">Vehicle Brand: &nbsp;</label><span class="text-red"><b>*</b></span>
+                        <select class="form-control" name="brand" id="brand" onchange="getModel(this,'model')">
+                            <option value="">Please Select ... </option>
+                            {% for brand in OPS.Brands %}
+                                <option value="{{ brand.brand_name }}" {% if brand.id == old.brand %}selected{% endif %}>{{ brand.brand_name | e }}</option>
+                            {% endfor %}
+                        </select>
+                        {% if errors.brand %}
+                            <span class="help-block">{{ errors.brand | first }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="form-group has-feedback{{ errors.model ? ' has-error' : '' }}">
+                        <label for="model">Vehicle Model: &nbsp;</label><span class="text-red"><b>*</b></span>
+                        <select class="form-control" name="model" id="model">
+                        </select>
+                        {% if errors.model %}
+                            <span class="help-block">{{ errors.model | first }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="form-group has-feedback{{ errors.model_year ? ' has-error' : '' }}">
+                        <label for="model_year">Vehicle Model Year: &nbsp;</label><span class="text-red"><b>*</b></span>
+                        <input type="number" name="model_year" class="form-control" id="model_year" min="2000" max="2099" placeholder="2017" value="{{ old.model_year?: '' }}"/>
+                        {% if errors.model_year %}
+                            <span class="help-block">{{ errors.model_year | first }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="form-group has-feedback{{ errors.registration_code ? ' has-error' : '' }}">
+                        <label for="registration_code">Registration Code: &nbsp;</label>
+                        <input type="text" name="registration_code" id="registration_code" class="form-control" placeholder="A" value="{{ old.registration_code ?: '' }}"/>
+                        {% if errors.registration_code %}
+                            <span class="help-block">{{ errors.registration_code | first }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="form-group has-feedback{{ errors.registration_number ? ' has-error' : '' }}">
+                        <label for="registration_number">Registration Number: &nbsp;</label>
+                        <input type="number" name="registration_number" id="registration_number" class="form-control" placeholder="12345" value="{{ old.registration_number ?: '' }}"/>
+                        {% if errors.registration_number %}
+                            <span class="help-block">{{ errors.registration_number | first }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="form-group has-feedback{{ errors.first_registration ? ' has-error' : '' }}">
+                        <label for="first_registration">Vehicle First Registered On: &nbsp;</label>
+                        <input type="text" name="first_registration" id="first_registration" class="form-control date-picker" value="{{ old.first_registration ?: '' }}"/>
+                        {% if errors.first_registration %}
+                            <span class="help-block">{{ errors.first_registration | first }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="form-group has-feedback{{ errors.registration_expiry ? ' has-error' : '' }}">
+                        <label for="registration_expiry">Vehicle Registration Expiry Date: &nbsp;</label>
+                        <input type="text" name="registration_expiry" id="registration_expiry" class="form-control date-picker" value="{{ old.registration_expiry ?: '' }}"/>
+                        {% if errors.registration_expiry %}
+                            <span class="help-block">{{ errors.registration_expiry | first }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="form-group has-feedback{{ errors.insurance_company ? ' has-error' : '' }}">
+                        <label for="insurance_company">Insurance Company: &nbsp;</label>
+                        <input type="text" name="insurance_company" id="insurance_company" class="form-control" placeholder="Insurance Company PJSC." value="{{ old.insurance_company ?: '' }}"/>
+                        {% if errors.insurance_company %}
+                            <span class="help-block">{{ errors.insurance_company | first }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="form-group has-feedback{{ errors.insurance_start_date ? ' has-error' : '' }}">
+                        <label for="insurance_start_date">Insurance Date (From): &nbsp;</label>
+                        <input type="text" name="insurance_start_date" id="insurance_start_date" class="form-control date-picker" value="{{ old.insurance_start_date ?: '' }}"/>
+                        {% if errors.insurance_start_date %}
+                            <span class="help-block">{{ errors.insurance_start_date | first }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="form-group has-feedback{{ errors.insurance_expiry_date ? ' has-error' : '' }}">
+                        <label for="insurance_expiry_date">Insurance Date (To): &nbsp;</label>
+                        <input type="text" name="insurance_expiry_date" id="insurance_expiry_date" class="form-control date-picker" value="{{ old.insurance_expiry_date ?: '' }}"/>
+                        {% if errors.insurance_expiry_date %}
+                            <span class="help-block">{{ errors.insurance_expiry_date | first }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="form-group checkbox has-feedback{{ errors.warranty_validity ? ' has-error' : '' }}">
+                        <label for="warranty_val">
+                            <input type="checkbox" name="warranty_val" id="warranty_val" value="0" class="checkbox-inline" onclick="showWarranty(this)" value="{{ old.warranty_val ?: '' }}"/>
+                            &nbsp; Vehicle Under Warranty? &nbsp;
+                        </label>
+                        <input type="hidden" name="warranty_validity" id="warranty_validity" class="checkbox-inline" value="{{ old.warranty_validity ?: '0' }}"/>
+                        {% if errors.warranty_validity %}
+                            <span class="help-block">{{ errors.warranty_validity | first }}</span>
+                        {% endif %}
+                    </div>
+                    <div id="warranty" class="hidden">
+                        <div class="form-group has-feedback{{ errors.warranty_expiry_date ? ' has-error' : '' }}">
+                            <label for="warranty_expiry_date">Warranty Expiry (Date): &nbsp;</label>
+                            <input type="text" name="warranty_expiry_date" id="warranty_expiry_date" class="form-control date-picker" value="{{ old.warranty_expiry_date ?: '' }}"/>
+                            {% if errors.warranty_expiry_date %}
+                                <span class="help-block">{{ errors.warranty_expiry_date | first }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="form-group has-feedback{{ errors.warranty_expiry_mileage ? ' has-error' : '' }}">
+                            <label for="warranty_expiry_mileage">Warranty Expiry (Mileage): &nbsp;</label>
+                            <input type="number" name="warranty_expiry_mileage" id="warranty_expiry_mileage" class="form-control" value="{{ old.warranty_expiry_mileage ?: '0' }}"/>
+                            {% if errors.warranty_expiry_mileage %}
+                                <span class="help-block">{{ errors.warranty_expiry_mileage | first }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div id="newAttachment" class="form-group">
+                        <label for="help-me">Attachments:</label>
+                        <p class="help-block" id="help-me"><span><i>Attach Images, Ownership, Insurance, or any other related documents<br/><mark>Remember to rename the files respectively</mark></i></span></p>
+                        <input type="hidden" id="attachmentCounter" name="attachmentCounter" value="-1">
+                        <input type="button" id="add" class="btn btn-xs" onclick="showInput('divattachmentGroup', 'attachmentCounter')" value="Add New" title="Add new attachment field"/> &nbsp;
+                        <input type="button" id="remove" class="btn btn-xs btn-danger" onclick="hideInput('divattachmentGroup', 'attachmentCounter')" value="Remove" title="Removes the last item" />
+                        <br/>
+                        <div class="form-group bg-gray-light hidden has-feedback {{ errors.attachment[0] ? ' has-error': '' }}" id="divattachmentGroup0">
+                            <div class="input-group inline has-feedback" id="div2attachment0">
+                                <label for="attachment0">File: &nbsp;</label>
+                                <input type="file" id="attachment0" name="attachment[]" class="btn btn-default btn-file"> &nbsp;
+                            </div>
+                        </div>
+                        <div class="form-group hidden has-feedback{{ errors.attachment[1] ? ' has-error' : '' }}" id="divattachmentGroup1">
+                            <div class="input-group inline has-feedback" id="div2attachment1">
+                                <label for="attachment1">File: &nbsp;</label>
+                                <input type="file" id="attachment1" name="attachment[]" class="btn btn-default btn-file"> &nbsp;
+                            </div>
+                        </div>
+                        <div class="form-group bg-gray-light hidden has-feedback{{ errors.attachment[2] ? ' has-error' : '' }}" id="divattachmentGroup2">
+                            <div class="input-group inline has-feedback" id="div2attachment2">
+                                <label for="attachment2">File: &nbsp;</label>
+                                <input type="file" id="attachment2" name="attachment[]" class="btn btn-default btn-file"> &nbsp;
+                            </div>
+                        </div>
+                        <div class="form-group hidden has-feedback{{ errors.attachment[3] ? ' has-error' : '' }}" id="divattachmentGroup3">
+                            <div class="input-group inline has-feedback" id="div2attachment3">
+                                <label for="attachment3">File: &nbsp;</label>
+                                <input type="file" id="attachment3" name="attachment[]" class="btn btn-default btn-file"> &nbsp;
+                            </div>
+                        </div>
+                        <div class="form-group bg-gray-light hidden has-feedback{{ errors.attachment[4] ? ' has-error' : '' }}" id="divattachmentGroup4">
+                            <div class="input-group inline has-feedback" id="div2attachment4">
+                                <label for="attachment4">File: &nbsp;</label>
+                                <input type="file" id="attachment4" name="attachment[]" class="btn btn-default btn-file"> &nbsp;
+                            </div>
+                        </div>
+                        <div class="form-group hidden  has-feedback{{ errors.attachment[5] ? ' has-error' : '' }}{{ errors.attachmentType5 ? ' has-error' : '' }}{{ errors.attachmentIssuer5 ? ' has-error' : '' }}{{ errors.attachmentIssueDate5 ? ' has-error' : '' }}{{ errors.attachmentExpiryDate5 ? ' has-error' : '' }}" id="divattachmentGroup5">
+                            <div class="input-group inline has-feedback" id="div2attachment5">
+                                <label for="attachment5">File: &nbsp;</label>
+                                <input type="file" id="attachment5" name="attachment[]" class="btn btn-default btn-file"> &nbsp;
+                            </div>
+                        </div>
+                        <div class="form-group bg-gray-light hidden has-feedback{{ errors.attachment[6] ? ' has-error' : '' }}" id="divattachmentGroup6">
+                            <div class="input-group inline has-feedback" id="div2attachment6">
+                                <label for="attachment6">File: &nbsp;</label>
+                                <input type="file" id="attachment6" name="attachment[]" class="btn btn-default btn-file"> &nbsp;
+                            </div>
+                        </div>
+                        <div class="form-group hidden has-feedback{{ errors.attachment[7] ? ' has-error' : '' }}" id="divattachmentGroup7">
+                            <div class="input-group inline has-feedback" id="div2attachment7">
+                                <label for="attachment7">File: &nbsp;</label>
+                                <input type="file" id="attachment7" name="attachment[]" class="btn btn-default btn-file"> &nbsp;
+                            </div>
+                        </div>
+                        <div class="form-group bg-gray-light hidden has-feedback{{ errors.attachment[8] ? ' has-error' : '' }}" id="divattachmentGroup8">
+                            <div class="input-group inline has-feedback" id="div2attachment8">
+                                <label for="attachment8">File: &nbsp;</label>
+                                <input type="file" id="attachment8" name="attachment[]" class="btn btn-default btn-file"> &nbsp;
+                            </div>
+                        </div>
+                        <div class="form-group hidden has-feedback{{ errors.attachment[9] ? ' has-error' : '' }}{{ errors.attachmentType9 ? ' has-error' : '' }}{{ errors.attachmentIssuer9 ? ' has-error' : '' }}{{ errors.attachmentIssueDate9 ? ' has-error' : '' }}{{ errors.attachmentExpiryDate9 ? ' has-error' : '' }}" id="divattachmentGroup9">
+                            <div class="input-group inline has-feedback" id="div2attachment9">
+                                <label for="attachment9">File: &nbsp;</label>
+                                <input type="file" id="attachment9" name="attachment[]" class="btn btn-default btn-file"> &nbsp;
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="form-group has-feedback">
+                        <input type="submit" name="submit" id="submit" class="btn btn-primary" value="Save Vehicle" />
+                    </div>
+                </form>
+            </div>
+        </div>
+{% endblock %}

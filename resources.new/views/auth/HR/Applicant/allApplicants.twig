@@ -1,0 +1,58 @@
+{% extends 'templates/app.twig' %}
+
+{% block title %}Home{% endblock %}
+
+{% block bodyTags %}
+    hold-transition skin-blue sidebar-collapse sidebar-mini
+{% endblock %}
+
+{% block contents %}
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <h1>
+            All Applicants
+            <small>This is a list of the registered applicants</small>
+        </h1>
+        <!--GUIDANCE MAPPER (TOP RIGHT)-->
+        <ol class="breadcrumb">
+            <li><a href="{{ path_for('home') }}"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li class="active">All Applicants</li>
+        </ol>
+        <!--END OF GUIDANCE MAPPER-->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+
+        <div class="col-xs-12 table-responsive">
+            <table class="table table-responsive table-striped table-hover table-condensed">
+                <thead class="">
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Phone</th>
+                    <th>Email</th>
+                    <th>Nationality</th>
+                    <th>Gender</th>
+                    <th>DoB</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for applicant in HR.applicants %}
+                    <tr>
+                        <td><a href="{{ path_for('HR.ApplicantById', {'id':applicant.id}) }}">=> {{ applicant.id }}</a></td>
+                        <td>{{ applicant.first_name }}.{{ applicant.last_name }}</td>
+                        <td>{{ applicant.mobile_phone }}</td>
+                        <td>{{ applicant.per_email }}</td>
+                        <td>{{ applicant.txtNationality() }}</td>
+                        <td>{% if applicant.gender == 'M' %}<i class="fa fa-male"></i>{% else %}<i class="fa fa-female"></i> {% endif %}</td>
+                        <td>{{ applicant.birth_date }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+    <!-- /.content -->
+    </div>
+{% endblock %}

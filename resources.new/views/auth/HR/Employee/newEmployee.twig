@@ -1,0 +1,78 @@
+{% extends 'templates/app.twig' %}
+{% block title %}New Employee{% endblock %}
+
+{% block bodyTags %}
+    hold-transition skin-blue sidebar-collapse sidebar-mini
+{% endblock %}
+
+{% block contents %}
+<section class="content" xmlns="http://www.w3.org/1999/html">
+        <div class="raw">
+            <div class="register-logo">
+                <a href="{{ base_url() }}"><b>MENA</b> Assistance</a>
+            </div>
+            <div class="register-box-body">
+                <p class="login-box-msg">
+                    Register a new Employee<br/>
+                    <small>Adding an employee will automatically create a user account</small>
+                </p>
+
+                <form action="{{ path_for('HR.NewEmployee') }}" method="post" autocomplete="on" enctype="multipart/form-data">
+                    <div class="form-group has-feedback{{ errors.applicant_name ? ' has-error' : '' }}">
+                        <input type="text" onkeyup="applicantAutoComplete()" name="applicant_name" id="applicant_name" value="{% if old.first_name %}{{ old.first_name }}.{{ old.last_name }}{% endif %}" class="form-control" placeholder="Start typing Applicant name">
+                        <ul id="applicant_option" name="applicant_option"></ul>
+                        <input type="hidden" name="applicant_id" id="applicant_id">
+                        <span class="glyphicon glyphicon-user form-control-feedback"></span>
+                        {% if errors.applicant_name %}
+                            <span class="help-block">{{ errors.applicant_name | first }}</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group has-feedback{{ errors.emp_ref ? ' has-error' : '' }}">
+                        <input type="text" name="emp_ref" id="emp_ref" class="form-control" value="{{ old.emp_ref }}" placeholder="New Employee Company ID / Reference"/>
+                        <span class="glyphicon glyphicon-asterisk form-control-feedback"></span>
+                        {% if errors.emp_ref %}
+                            <span class="help-block">{{ errors.emp_ref | first }}</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group has-feedback{{ errors.hire_date ? ' has-error' : '' }}">
+                        <label>Joining Date:</label>
+                        <div class="input-group date">
+                            <div class="input-group-addon">
+                                <i class="fa fa-calendar"></i>
+                            </div>
+                            <input type="date" class="form-control pull-right" name="hire_date" id="hire_date" value="{{ old.hire_date }}">
+                        </div>
+                        {% if errors.hire_date %}
+                            <span class="help-block">{{ errors.hire_date | first }}</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group has-feedback{{ errors.extension ? ' has-error' : '' }}">
+                        <input type="text" name="extension" id="extension" class="form-control" value="{{ old.extension }}" placeholder="New Employee assigned business extension"/>
+                        <span class="glyphicon glyphicon-phone-alt form-control-feedback"></span>
+                        {% if errors.extension %}
+                            <span class="help-block">{{ errors.extension | first }}</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group has-feedback{{ errors.business_email ? ' has-error' : '' }}">
+                        <input type="text" name="business_email" id="business_email" class="form-control" value="{{ old.business_email }}" placeholder="New Employee assigned email"/>
+                        <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+                        {% if errors.extension %}
+                            <span class="help-block">{{ errors.extension | first }}</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group has-feedback">
+                        <p class="help-block">
+                                <i>Activate user account for this Employee?</i>&nbsp;
+                            <input type="checkbox" name="user"></p>
+                    </div>
+                    <button type="submit" name="submit" id="submit"class="btn btn-default">Register New Employee</button>
+                    {{ csrf.field | raw }}
+                </form>
+            </div>
+        </div>
+{% endblock %}

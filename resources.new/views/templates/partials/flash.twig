@@ -1,0 +1,26 @@
+{% if flash.getMessage('global') %}
+    <div class="callout callout-info">
+        <h4>FLASH HEADER!</h4>
+        {{ flash.getMessage('global') | first }}
+    </div>
+{% elseif flash.getMessage('info') %}
+    <div class="callout callout-info">
+        <h4>Information!</h4>
+        {{ flash.getMessage('info') | first }}
+    </div>
+{% elseif flash.getMessage('danger') %}
+    <div class="callout callout-danger">
+        <h4>Error!</h4>
+        {{ flash.getMessage('danger') | first }}
+    </div>
+{% elseif flash.getMessage('success') %}
+    <div class="callout callout-success">
+        <h4>Success!</h4>
+        {{ flash.getMessage('success') | first }}
+    </div>
+{% elseif flash.getMessage('warning') %}
+    <div class="callout callout-warning">
+        <h4>Warning!</h4>
+        {{ flash.getMessage('warning') | first }}
+    </div>
+{% endif %}
