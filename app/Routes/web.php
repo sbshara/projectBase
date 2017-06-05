@@ -8,6 +8,8 @@
 
 use App\Controllers\HomeController;
 
+use App\Controllers\AuthController;
+
 $app->get('/', HomeController::class . ':index')->setName('home');
 
 
@@ -21,7 +23,7 @@ $app->group('/auth', function () {
 
     $this->post('/signout/', AuthController::class . ':postSignOut')->setName('auth.SignOut');
 
-    $this->get('/signup/', AuthController::class . ':getSignUp')->setName('auth.SigUp');
+    $this->get('/signup/', AuthController::class . ':getSignUp')->setName('auth.SignUp');
     $this->post('/signup/', AuthController::class . ':postSignUp');
 
 });

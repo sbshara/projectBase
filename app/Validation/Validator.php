@@ -8,28 +8,32 @@
 
 namespace App\Validation;
 
+use Respect\Validation\Validator as Respect;
 use Respect\Validation\Exceptions\NestedValidationException;
 
 class Validator {
 
-    protected $errors;
+    protected $validationErrors;
 
     public function validate ($request, array $rules) {
 
         foreach ($rules as $field => $rule) {
             try {
-                $rule->setName(ucfirst(str_replace('_', ' ', $field)))->assert($request->getParam($field));
+                $rule->setName(
+                    ucfirst(str_replace('_', ' ', $field)))
+                    ->assert($request->getParam($field)
+                    );
             } catch (NestedValidationException $exception) {
-                $this->errors[$field] = $exception->getMessages();
+                $this->validationErrors[$field] = $exception->getMessages();
             }
         }
-        $_SESSION['errors'] = $this->errors;
+        $_SESSION['validationErrors'] = $this->validationErrors;
 
         return $this;
     }
 
     public function failed () {
-        return !empty($this->errors);
+        return !empty($this->validationErrors);
     }
 
 }

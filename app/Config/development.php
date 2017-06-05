@@ -19,7 +19,7 @@ return [
     'db'        =>  [       // DB Configurations
         'driver'                            =>  'mysql',
         'host'                              =>  'localhost',
-        'database'                          =>  'bshara',
+        'database'                          =>  'ozf_cart',
         'username'                          =>  'bshara',
         'password'                          =>  'P@ssw0rd',
         'charset'                           =>  'utf8',

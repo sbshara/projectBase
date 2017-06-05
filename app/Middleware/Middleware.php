@@ -2,12 +2,11 @@
 /**
  * Created by PhpStorm.
  * User: shiblie
- * Date: 5/30/17
- * Time: 9:44 PM
+ * Date: 6/5/17
+ * Time: 7:24 PM
  */
 
 namespace App\Middleware;
-
 
 class Middleware {
 

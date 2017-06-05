@@ -21,10 +21,14 @@ class User extends Model {
         'username',
         'email',
         'phone',
+        'password',
+        'phone',
         'active',
         'active_hash',
         'remember_identifier',
-        'remember_token'
+        'remember_token',
+        'created_at',
+        'updated_at'
     ];
 
     public function fullName () {

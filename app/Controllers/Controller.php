@@ -8,6 +8,7 @@
 
 namespace App\Controllers;
 
+
 use Interop\Container\ContainerInterface;
 
 abstract class Controller {
@@ -17,7 +18,7 @@ abstract class Controller {
 //    protected $args;
     protected $container;
 
-//    public function __construct($request, $response, $args, Container $container) {
+//    public function __construct($request, $response, $args, $container) {
     public function __construct(ContainerInterface $container) {
 //        $this->request = $request;
 //        $this->response = $response;
@@ -34,15 +35,15 @@ abstract class Controller {
 //    public function config($key) {
 //        return $this->config->get($key);
 //    }
-//
+
 //    public function lang($key) {
 //        return $this->config("lang." . $key);
 //    }
-//
+
 //    public function param($name) {
 //        return $this->request->getParam($name);
 //    }
-//
+
 //    public function flash($type, $message) {
 //        return $this->flash->addMessage($type, $message);
 //    }

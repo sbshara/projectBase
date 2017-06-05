@@ -6,15 +6,19 @@
  * Time: 10:31 PM
  */
 
+use Noodlehaus\Config;
 use Slim\Views\Twig;
 use Slim\Views\TwigExtension;
+use Illuminate\Database\Capsule\Manager as Capsule;
+
 use Slim\Flash\Messages;
 use Slim\Csrf\Guard;
-use Illuminate\Database\Capsule\Manager as Capsule;
-//use Illuminate\Container\Container;
-use Noodlehaus\Config;
 
 use App\Controllers\HomeController;
+use App\Controllers\AuthController;
+
+use App\Validation\Validator;
+
 
 $container = $app->getContainer();
 
@@ -50,47 +54,44 @@ $container['view'] = function ($container) {            // Add the Twig View dep
     return $view;
 };
 
+$container['config'] = function ($container) {
+    return new Config(
+        ROOTPATH . DS . 'app' . DS . 'Config' . DS . APPMODE
+    );
+};
 
+// DB Connection (using Illuminate DB Manager)
+$capsule = new Capsule;
+$capsule->addConnection($container->config->get('db'));
+$capsule->setAsGlobal();
+$capsule->bootEloquent();
+
+$container['db'] = function ($container) use ($capsule) {
+    return $capsule;
+};
+
+// Add the Controllers:
 $container['HomeController'] = function ($container) {
     return new HomeController();
 };
 
+$container['AuthController'] = function ($container) {
+    return new AuthController($container);
+};
 
+// Add the validation dependency
+$container['validator'] = function ($container) {
+    return new Validator();
+};
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-$container['config'] = function ($container) { return new Config(ROOTPATH.DS.'app'.DS.'Config'.DS.APPMODE); };
-$capsule = new Capsule;
-$capsule->addConnection($container->config->get('db'));
-//$capsule->setEventDispatcher(new Dispatcher(new Container));
-$capsule->setAsGlobal();
-$capsule->bootEloquent();
-
-
-$container['db'] = function ($container) use ($capsule) { return $capsule; };
-
-// Add the authorization dependency
-//$container['auth'] = function ($container) { return new \App\Helpers\Auth(); };
 
 $container['flash'] = function ($container) {  return new Messages(); }; // Add global message flash dependency
 
 
 
-// Add the validation dependency
-$container['validator'] = function ($container) {
-    return new App\Validation\Validator();
-};
+
+
+//$container['csrf'] = function ($container) { return new Guard(); };
 
 //$container['cache'] = function ($container) {
 ////    return new \App\Middleware\HttpCache\CacheProvider();             // Slim HttpCache
@@ -112,19 +113,9 @@ $container['validator'] = function ($container) {
 //    return new App\Handlers\phpErrorHandler($container['view']);
 //};
 
-// Add the Controllers:
-//$container['AuthController'] = function ($container) {
-//    return new \App\Controllers\Auth\AuthController($container);
-//};
-
 //$container['PasswordController'] = function ($container) {
 //    return new \App\Controllers\Auth\PasswordController($container);
 //};
-
-// Add the validation dependency
-$container['validator'] = function ($container) {
-    return new App\Validation\Validator();
-};
 
 //$container['cache'] = function ($container) {
 //    return new \App\Middleware\HttpCache\CacheProvider();
@@ -135,4 +126,3 @@ $container['validator'] = function ($container) {
 //    return new App\Handlers\NotFoundHandler($container['view']);
 //};
 
-$container['csrf'] = function ($container) { return new Guard(); };
