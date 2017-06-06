@@ -89,9 +89,9 @@ $container['flash'] = function ($container) {  return new Messages(); }; // Add 
 
 
 
-
-
-//$container['csrf'] = function ($container) { return new Guard(); };
+$container['csrf'] = function ($container) {
+    return new Guard();
+};
 
 //$container['cache'] = function ($container) {
 ////    return new \App\Middleware\HttpCache\CacheProvider();             // Slim HttpCache
@@ -99,30 +99,20 @@ $container['flash'] = function ($container) {  return new Messages(); }; // Add 
 //};
 
 // Override notFoundHandler (404):
-//$container['notFoundHandler'] = function ($container) {
-//    return new App\Handlers\NotFoundHandler($container['view']);
-//};
+$container['notFoundHandler'] = function ($container) {
+    return new App\Handlers\NotFoundHandler($container['view']);
+};
 
 // Override notAllowedHandler (405):
-//$container['notAllowedHandler'] = function ($container) {
-//    return new App\Handlers\notAllowedHanlder($container['view']);
-//};
+$container['notAllowedHandler'] = function ($container) {
+    return new App\Handlers\notAllowedHandler($container['view']);
+};
 
 // Override phpErrorHandler (500):
-//$container['phpErrorHandler'] = function ($container) {
-//    return new App\Handlers\phpErrorHandler($container['view']);
-//};
+$container['phpErrorHandler'] = function ($container) {
+    return new App\Handlers\phpErrorHandler($container['view']);
+};
 
 //$container['PasswordController'] = function ($container) {
 //    return new \App\Controllers\Auth\PasswordController($container);
 //};
-
-//$container['cache'] = function ($container) {
-//    return new \App\Middleware\HttpCache\CacheProvider();
-//};
-
-// Override notFoundHandler:
-//$container['notFoundHandler'] = function ($container) {
-//    return new App\Handlers\NotFoundHandler($container['view']);
-//};
-

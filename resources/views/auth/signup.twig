@@ -74,6 +74,8 @@
                                 <span class="help-block">{{ validationErrors.confirm_password | first }}</span>
                             {% endif %}
                         </div>
+
+                        {{ csrf.field | raw }}
                         <input type="submit" value="Submit" class="form-control btn-primary">
                     </form>
                 </div>
