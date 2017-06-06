@@ -36,12 +36,14 @@
         "illuminate/database": "^5.4",
         "phpmailer/phpmailer": "^5.2",
 
+        "ircmaxell/random-lib": "^1.2",
+        "respect/validation": "^1.1",
+
+
         "alexgarrett/violin": "^2.2",
         "google/recaptcha": "^1.1",
-        "ircmaxell/random-lib": "^1.2",
         "symfony/console": "^3.2",
-        "vlucas/phpdotenv": "^2.4",
-        "respect/validation": "^1.1"
+        "vlucas/phpdotenv": "^2.4"
     },
     "config": {
         "sort-packages": false,

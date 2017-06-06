@@ -2,7 +2,7 @@
 /**
  * Created by PhpStorm.
  * User: shiblie
- * Date: 11/9/16
+ * Date: 6/6/17
  * Time: 4:16 PM
  */
 
@@ -13,7 +13,7 @@ use Respect\Validation\Rules\AbstractRule;
 
 class EmailAvailable extends AbstractRule {
 
-	public function validate($input) {
+	public function validate ($input) {
 		return User::where('email', $input)->count() === 0;
 	}
 

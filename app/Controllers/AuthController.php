@@ -34,7 +34,8 @@ class AuthController extends Controller {
         $validation = $this->container->validator->validate($request, [
             'first_name'        =>  v::alpha()->notEmpty()->noWhiteSpace()->length(3,24),
             'last_name'         =>  v::alpha(),
-            'email'             =>  v::noWhitespace()->notEmpty(),
+            'email'             =>  v::email()->notEmpty()->emailAvailable(),
+            'phone'             =>  v::phone()->usernameAvailable(),
             'username'          =>  v::noWhitespace()->notEmpty(),
             'password'          =>  v::notEmpty()->length(8,56),
             'confirm_password'  =>  v::notEmpty()

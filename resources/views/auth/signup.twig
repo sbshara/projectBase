@@ -14,28 +14,48 @@
                     <form action="{{ path_for('auth.SignUp') }}" method="post" autocomplete="on">
                         <div class="form-group has-feedback{{ validationErrors.first_name ? ' has-error' : '' }}">
                             <label for="first_name">First Name:</label>
-                            <input type="text" name="first_name" id="first_name" class="form-control">
+                            <input type="text" name="first_name" id="first_name" class="form-control" value="{{ oldInput.first_name ? oldInput.first_name : '' }}">
                             {% if validationErrors.first_name %}
                                 <span class="help-block">{{ validationErrors.first_name | first }}</span>
                             {% endif %}
                         </div>
                         <div class="form-group has-feedback{{ validationErrors.last_name ? ' has-error' : '' }}">
                             <label for="last_name">Last Name:</label>
-                            <input type="text" name="last_name" id="last_name" class="form-control">
+                            <input type="text" name="last_name" id="last_name" class="form-control" value="{{ oldInput.last_name ? oldInput.last_name : '' }}">
                             {% if validationErrors.last_name %}
                                 <span class="help-block">{{ validationErrors.last_name | first }}</span>
                             {% endif %}
                         </div>
                         <div class="form-group has-feedback{{ validationErrors.username ? ' has-error' : '' }}">
                             <label for="username">Username:</label>
-                            <input type="text" name="username" id="username" class="form-control">
+                            <input type="text" name="username" id="username" class="form-control" value="{{ oldInput.username ? oldInput.username : '' }}">
                             {% if validationErrors.username %}
                                 <span class="help-block">{{ validationErrors.username | first }}</span>
                             {% endif %}
                         </div>
+                        <div class="form-group has-feedback{{ validationErrors.phone ? ' has-error' : '' }}">
+                            <label for="username">Phone:</label>
+                            <input
+                                    type="text"
+                                    name="phone"
+                                    id="phone"
+                                    class="form-control"
+                                    value="{{ oldInput.phone ? oldInput.phone : '' }}"
+                                    title="   (050)555-5555
+    050 555 5555
+    +971(55)555.5555
+    971(0)55 55 55 555
+    +971(0)55 55 55 555
+    +971(050)7777 7777
+    04-4444444"
+                            >
+                            {% if validationErrors.phone %}
+                                <span class="help-block">{{ validationErrors.phone | first }}</span>
+                            {% endif %}
+                        </div>
                         <div class="form-group has-feedback{{ validationErrors.email ? ' has-error' : '' }}">
                             <label for="email">Email:</label>
-                            <input type="text" name="email" id="email" class="form-control">
+                            <input type="text" name="email" id="email" class="form-control" value="{{ oldInput.email ? oldInput.email : '' }}" title="user@domain.com">
                             {% if validationErrors.email %}
                                 <span class="help-block">{{ validationErrors.email | first }}</span>
                             {% endif %}
