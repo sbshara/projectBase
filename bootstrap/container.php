@@ -24,32 +24,46 @@ $container = $app->getContainer();
 
 $container['view'] = function ($container) {            // Add the Twig View dependency
     $view = new Twig(
-        $container->config->get('view.template'), [
+        $container
+            ->config
+            ->get('view.template'), [
         'cache' =>  $container->config->get('view.cache'),
         'debug' =>  $container->config->get('view.debug')
     ]);
-    $view->addExtension (
+    $view
+        ->addExtension (
         new TwigExtension (
             $container->router,
             $container->request->getUri()
         )
     );
-    $view->getEnvironment()->addGlobal('URI', [
-        'FullPath'      =>  $container->request->getUri(),
-        'Path'          =>  $container->request->getUri()->getPath(),
-        'BasePath'      =>  $container->request->getUri()->getBasePath()
-    ]);
+    $view
+        ->getEnvironment()
+        ->addGlobal(
+            'URI', [
+                'FullPath'      =>  $container->request->getUri(),
+                'Path'          =>  $container->request->getUri()->getPath(),
+                'BasePath'      =>  $container->request->getUri()->getBasePath()
+            ]
+        );
 
-    // Globalize the Auth module to access it within template partials
-//    $view->getEnvironment()->addGlobal('auth', [
-//        'check'         	=>  $container->auth->check(),
-//        'user'          	=>  $container->auth->user(),
-//        'profile'       	=>  $container->auth->profile(),
-//        'userMaster'        =>  $container->auth->userMaster()
-//    ]);
+//    Globalize the Auth module to access it within template partials
+    $view
+        ->getEnvironment()
+        ->addGlobal (
+            'auth', [
+                'check'         	=>  $container->auth->check(),
+                'user'          	=>  $container->auth->user()
+            ]
+        );
 
     // Add the flash message
-    $view->getEnvironment()->addGlobal('flash', $container->flash);
+    $view
+        ->getEnvironment()
+        ->addGlobal(
+            'flash',
+            $container->flash
+        );
 
     return $view;
 };
@@ -84,13 +98,16 @@ $container['validator'] = function ($container) {
     return new Validator();
 };
 
-
-$container['flash'] = function ($container) {  return new Messages(); }; // Add global message flash dependency
-
-
+$container['flash'] = function ($container) {
+    return new Messages();  // Add global message flash dependency
+};
 
 $container['csrf'] = function ($container) {
     return new Guard();
+};
+
+$container['auth'] = function ($container) {
+    return new \App\Auth\Auth();
 };
 
 //$container['cache'] = function ($container) {

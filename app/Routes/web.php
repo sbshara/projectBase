@@ -17,14 +17,16 @@ $app->get('/', HomeController::class . ':index')->setName('home');
 
 $app->group('/auth', function () {
 
-    $this->get('/signin/', AuthController::class . ':getSignin')->setName('auth.Sigin');
-    $this->post('/signin/', AuthController::class . ':postSignin');
-
-
-    $this->post('/signout/', AuthController::class . ':postSignOut')->setName('auth.SignOut');
-
     $this->get('/signup/', AuthController::class . ':getSignUp')->setName('auth.SignUp');
     $this->post('/signup/', AuthController::class . ':postSignUp');
+
+    $this->get('/signin/', AuthController::class . ':getSignIn')->setName('auth.SignIn');
+    $this->post('/signin/', AuthController::class . ':postSignIn');
+
+    $this->get('/signout/', AuthController::class . ':getSignOut')->setName('auth.SignOut');
+
+    $this->get('/password/change/', AuthController::class . ':getPasswordChange')->setName('auth.password.change');
+    $this->post('/password/change/', AuthController::class . ':postPasswordChange');
 
 });
 

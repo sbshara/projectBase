@@ -14,18 +14,6 @@ use Respect\Validation\Validator as v;
 
 class AuthController extends Controller {
 
-    public function getSignin ($request, $response, $args) {
-        return $this->view->render($response,'auth/signin.twig');
-    }
-
-    public function postSignin ($request, $response, $args) {
-        //
-    }
-
-    public function postSignout ($request, $response, $args) {
-        return $this->view->render($response,'auth/signin.twig');
-    }
-
     public function getSignUp ($request, $response, $args) {
         return $this->view->render($response, 'auth/signup.twig');
     }
@@ -36,7 +24,6 @@ class AuthController extends Controller {
             'last_name'         =>  v::alpha(),
             'email'             =>  v::email()->notEmpty()->emailAvailable(),
             'phone'             =>  v::phone()->usernameAvailable(),
-            'username'          =>  v::noWhitespace()->notEmpty(),
             'password'          =>  v::notEmpty()->length(8,56),
             'confirm_password'  =>  v::notEmpty()
         ]);
@@ -53,7 +40,46 @@ class AuthController extends Controller {
             'password'      =>  password_hash($request->getParam('password'), PASSWORD_DEFAULT)
         ]);
 
+        $this->auth->attempt($request->getParam('email'), $request->getParam('password'));
         return $response->withRedirect($this->router->pathFor('home'));
+    }
+
+    public function getSignIn ($request, $response, $args) {
+        return $this->view->render($response,'auth/signin.twig');
+    }
+
+    public function postSignIn ($request, $response, $args) {
+        // Validation (for UX only)
+        $auth = $this->auth->attempt (
+            $request->getParam('email'),
+            $request->getParam('password')
+        );
+
+        if (!$auth) {
+            // Flash failure here
+            return $response->withRedirect($this->router->pathFor('auth.SignIn'));
+        }
+
+        return $response->withRedirect($this->router->pathFor('home'));
+
+    }
+
+    public function getSignOut ($request, $response, $args) {
+        $this->auth->signOut();
+        return $response->withRedirect($this->router->pathFor('home'));
+    }
+
+
+    public function getPasswordChange ($request, $response, $args) {
+        return $this->view->render($response, 'auth/passwordChange.twig');
+    }
+
+    public function postPasswordChange ($request, $response, $args) {
+        // check if user is still logged in
+        // validation
+        // password change
+        // flash
+        // email notification
     }
 
 }

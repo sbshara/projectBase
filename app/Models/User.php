@@ -18,7 +18,6 @@ class User extends Model {
         'id',
         'first_name',
         'last_name',
-        'username',
         'email',
         'phone',
         'password',
@@ -27,6 +26,12 @@ class User extends Model {
         'active_hash',
         'remember_identifier',
         'remember_token',
+        'oauth_provider',
+        'oauth_uid',
+        'gender',
+        'locale',
+        'picture',
+        'link',
         'created_at',
         'updated_at'
     ];
