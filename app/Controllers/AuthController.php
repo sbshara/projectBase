@@ -29,6 +29,9 @@ class AuthController extends Controller {
         ]);
 
         if ($validation->failed()) {
+            $this->flash->addMessage(
+                'warning',
+                'There are some errors with the provided data, please check & try again!');
             return $response->withRedirect($this->router->pathFor('auth.SignUp'));
         }
 
@@ -40,7 +43,13 @@ class AuthController extends Controller {
             'password'      =>  password_hash($request->getParam('password'), PASSWORD_DEFAULT)
         ]);
 
+        // This is where you send an email
+
+        $this->flash->addMessaeg(
+            'success',
+            'Your Account was created successfully. Please check your email for activation instructions.');
         $this->auth->attempt($request->getParam('email'), $request->getParam('password'));
+
         return $response->withRedirect($this->router->pathFor('home'));
     }
 
@@ -56,9 +65,14 @@ class AuthController extends Controller {
         );
 
         if (!$auth) {
-            // Flash failure here
+            $this->flash->addMessage(
+                'error',
+                'Could not log you in!');
             return $response->withRedirect($this->router->pathFor('auth.SignIn'));
         }
+        $this->flash->addMessage(
+            'info',
+            'Welcome ' . $this->auth->user()->fullName() . '!');
 
         return $response->withRedirect($this->router->pathFor('home'));
 
@@ -68,7 +82,6 @@ class AuthController extends Controller {
         $this->auth->signOut();
         return $response->withRedirect($this->router->pathFor('home'));
     }
-
 
     public function getPasswordChange ($request, $response, $args) {
         return $this->view->render($response, 'auth/passwordChange.twig');

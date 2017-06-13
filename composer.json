@@ -46,7 +46,8 @@
         "vlucas/phpdotenv": "^2.4"
     },
     "config": {
-        "sort-packages": false,
+        "sort-packages": true,
+        "autoloader": true,
         "optimize-autoloader": true
     }
 }

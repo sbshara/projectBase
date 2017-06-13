@@ -43,15 +43,9 @@
         {% include 'templates/partials/navigation.twig' %}
 
     <div class="container">
-    {% block contents %}{% endblock %}
+        {% include 'templates/partials/flash.twig' %}
+        {% block contents %}{% endblock %}
     </div>
-
-
-
-
-
-
-
 
     <!-- jQuery 2.2.4 -->
     <script
@@ -65,10 +59,6 @@
 
     <!-- JQuery UI Lib -->
     {# <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script> #}
-
-
-
-
 
     <!-- Latest compiled and minified Bootstrap 3.3.7 JavaScript -->
     <script
