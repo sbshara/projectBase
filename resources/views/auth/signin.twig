@@ -12,7 +12,7 @@
             <div class="panel panel-default">
                 <div class="panel-heading">Sign In</div>
                 <div class="panel-body">
-                    <form action="{{ path_for('auth.SignIn') }}" method="post" autocomplete="on">
+                    <form action="{{ path_for('auth.SignIn') }}" method="post" autocomplete="on" id="frm">
                         <div class="form-group has-feedback{{ validationErrors.email ? ' has-error' : '' }}">
                             <label for="email">Email:</label>
                             <input type="text" name="email" id="email" class="form-control" value="{{ oldInput.email ? oldInput.email : '' }}" title="user@domain.com">
@@ -29,7 +29,7 @@
                         </div>
 
                         {{ csrf.field | raw }}
-                        <input type="submit" value="Sign In" class="form-control btn-primary">
+                        <input type="submit" value="Sign In" class="form-control btn-primary" >
                     </form>
                 </div>
             </div>
@@ -38,4 +38,6 @@
 {% endblock %}
 
 
-{% block additionalJS %}{% endblock %}
+{% block additionalJS %}
+    <script src="{{ base_url() }}/js/shiblie.js" type="text/javascript"></script>
+{% endblock %}

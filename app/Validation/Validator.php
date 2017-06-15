@@ -20,9 +20,12 @@ class Validator {
         foreach ($rules as $field => $rule) {
             try {
                 $rule->setName(
-                    ucfirst(str_replace('_', ' ', $field)))
-                    ->assert($request->getParam($field)
-                    );
+                    ucfirst(
+                        str_replace(
+                            '_',
+                            ' ',
+                            $field)))
+                    ->assert($request->getParam($field));
             } catch (NestedValidationException $exception) {
                 $this->validationErrors[$field] = $exception->getMessages();
             }

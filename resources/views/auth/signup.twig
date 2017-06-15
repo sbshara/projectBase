@@ -14,7 +14,7 @@
             <div class="panel panel-default">
                 <div class="panel-heading">Sign up</div>
                 <div class="panel-body">
-                    <form action="{{ path_for('auth.SignUp') }}" method="post" autocomplete="on">
+                    <form action="{{ path_for('auth.SignUp') }}" method="post" autocomplete="on" id="frm">
                         <div class="form-group has-feedback{{ validationErrors.first_name ? ' has-error' : '' }}">
                             <label for="first_name">First Name:</label>
                             <input type="text" name="first_name" id="first_name" class="form-control" value="{{ oldInput.first_name ? oldInput.first_name : '' }}">

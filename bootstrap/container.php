@@ -22,6 +22,12 @@ use App\Validation\Validator;
 
 $container = $app->getContainer();
 
+$container['config'] = function ($container) {
+    return new Config(
+        ROOTPATH . DS . 'app' . DS . 'Config' . DS . APPMODE
+    );
+};
+
 $container['view'] = function ($container) {            // Add the Twig View dependency
     $view = new Twig(
         $container
@@ -50,12 +56,10 @@ $container['view'] = function ($container) {            // Add the Twig View dep
 //    Globalize the Auth module to access it within template partials
     $view
         ->getEnvironment()
-        ->addGlobal (
-            'auth', [
-                'check'         	=>  $container->auth->check(),
-                'user'          	=>  $container->auth->user()
-            ]
-        );
+        ->addGlobal ('auth', [
+            'check'         	=>  $container->auth->check(),
+            'user'          	=>  $container->auth->user()
+            ]);
 
     // Add the flash message
     $view
@@ -66,12 +70,6 @@ $container['view'] = function ($container) {            // Add the Twig View dep
         );
 
     return $view;
-};
-
-$container['config'] = function ($container) {
-    return new Config(
-        ROOTPATH . DS . 'app' . DS . 'Config' . DS . APPMODE
-    );
 };
 
 // DB Connection (using Illuminate DB Manager)
@@ -128,6 +126,11 @@ $container['notAllowedHandler'] = function ($container) {
 // Override phpErrorHandler (500):
 $container['phpErrorHandler'] = function ($container) {
     return new App\Handlers\phpErrorHandler($container['view']);
+};
+
+// Override CsrfErrorHandler (CSRF):
+$container['CsrfErrorHandler'] = function ($container) {
+    return new App\Handlers\CsrfErrorHandler($container['view']);
 };
 
 //$container['PasswordController'] = function ($container) {

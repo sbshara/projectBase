@@ -31,5 +31,9 @@ class CsrfViewMiddleware extends Middleware {
         return $response;
     }
 
+    public function getFailureCallable() {
+
+    }
+
 
 }

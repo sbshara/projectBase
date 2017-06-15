@@ -14,6 +14,7 @@ use Respect\Validation\Validator as v;
 
 class AuthController extends Controller {
 
+    // Sign Up Methods
     public function getSignUp ($request, $response, $args) {
         return $this->view->render($response, 'auth/signup.twig');
     }
@@ -53,6 +54,7 @@ class AuthController extends Controller {
         return $response->withRedirect($this->router->pathFor('home'));
     }
 
+    // Sign In Methods
     public function getSignIn ($request, $response, $args) {
         return $this->view->render($response,'auth/signin.twig');
     }
@@ -75,24 +77,33 @@ class AuthController extends Controller {
             'Welcome ' . $this->auth->user()->fullName() . '!');
 
         return $response->withRedirect($this->router->pathFor('home'));
-
     }
 
+    // Sign Out Method
     public function getSignOut ($request, $response, $args) {
         $this->auth->signOut();
         return $response->withRedirect($this->router->pathFor('home'));
     }
 
+    // Password Methods
     public function getPasswordChange ($request, $response, $args) {
         return $this->view->render($response, 'auth/passwordChange.twig');
     }
 
     public function postPasswordChange ($request, $response, $args) {
-        // check if user is still logged in
-        // validation
-        // password change
-        // flash
-        // email notification
+        $validation = $this->validator->validate($request, [
+            'old_Password'       =>  v::notEmpty()->noWhitespace()->matchesPassword($this->auth->user()->password),
+            'new_Password'       =>  v::notEmpty()->noWhitespace()->length(6,32, true),
+            'confirm_Password'   =>  v::notEmpty()->noWhitespace()
+        ]);
+        if ($validation->failed()) {
+            $this->flash->addMessage('warning', 'Some of the info provided is incorrect / invalid!');
+            return $response->withRedirect($this->router->pathFor('auth.password.change'));
+        }
+        $this->auth->user()->setPassword($request->getParam('new_Password'));
+        $this->flash->addMessage('success', 'Your password was changed successfully.');
+        // Email notification comes here (maybe reset all saved sessions also)
+        return $response->withRedirect($this->router->pathFor('home'));
     }
 
 }

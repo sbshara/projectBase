@@ -1,0 +1,39 @@
+{% extends 'templates/app.twig' %}
+
+{% block title %}CSRF Error | BSHARA{% endblock %}
+
+{% block contents %}
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <h1>CSRF Error</h1>
+        <small>Cross-Site Request Forgery Error. </small>
+        <!--GUIDANCE MAPPER (TOP RIGHT)-->
+        <ol class="breadcrumb">
+            <li><a href="{{ path_for('home') }}"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li class="active">CSRF Error</li>
+        </ol>
+        <!--END OF GUIDANCE MAPPER-->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+
+        <div class="error-page">
+            <h2 class="headline text-yellow"> CSRF Error</h2>
+
+            <div class="error-content">
+                <h3><i class="fa fa-warning text-yellow"></i> Could not pass the CSRF validation.</h3>
+
+                <p>
+                    Could not pass the Cross-Site Request Forgery validation. <br/>
+                    If you performed the request, and got this error, make sure you click the submit / save button once!
+                    You may try to return <a href="{{ path_for('home') }}">Home</a>.
+                </p>
+                <img src="{{ base_url() }}/img/csrf.jpg" align="left">
+            </div>
+            <!-- /.error-content -->
+        </div>
+    </section>
+    <!-- /.content -->
+    </div>
+{% endblock %}

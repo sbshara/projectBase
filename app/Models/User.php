@@ -40,6 +40,12 @@ class User extends Model {
         return $this->first_name . ' ' . $this->last_name;
     }
 
+    public function setPassword($password) {
+        $this->update([
+            'password'  =>  password_hash($password, PASSWORD_DEFAULT)
+        ]);
+    }
+
 
 
 
