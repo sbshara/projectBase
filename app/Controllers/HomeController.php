@@ -17,5 +17,8 @@ class HomeController extends Controller {
         return $this->view->render($response, 'home.twig');
     }
 
+    public function publicIndex ($request, $response, $args) {
+        return $this->view->render($response, 'public.twig');
+    }
 
 }

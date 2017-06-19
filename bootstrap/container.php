@@ -16,6 +16,7 @@ use Slim\Csrf\Guard;
 
 use App\Controllers\HomeController;
 use App\Controllers\AuthController;
+use App\Controllers\AdminController;
 
 use App\Validation\Validator;
 
@@ -58,7 +59,8 @@ $container['view'] = function ($container) {            // Add the Twig View dep
         ->getEnvironment()
         ->addGlobal ('auth', [
             'check'         	=>  $container->auth->check(),
-            'user'          	=>  $container->auth->user()
+            'user'          	=>  $container->auth->user(),
+            'Users'             =>  $container->auth->allUsers()
             ]);
 
     // Add the flash message
@@ -91,6 +93,10 @@ $container['AuthController'] = function ($container) {
     return new AuthController($container);
 };
 
+$container['AdminController'] = function ($container) {
+    return new AdminController($container);
+};
+
 // Add the validation dependency
 $container['validator'] = function ($container) {
     return new Validator();
@@ -108,10 +114,16 @@ $container['auth'] = function ($container) {
     return new \App\Auth\Auth();
 };
 
-//$container['cache'] = function ($container) {
-////    return new \App\Middleware\HttpCache\CacheProvider();             // Slim HttpCache
-//    return new \Slim\HttpCache\CacheProvider();
+
+//  TODO: try to convert the web router (text) into a connection to DB
+//$container['router'] = function ($container) {
+//    return new \App\Auth\CusRouter();
 //};
+
+$container['cache'] = function ($container) {
+//    return new \App\Middleware\HttpCache\CacheProvider();             // Slim HttpCache
+    return new \Slim\HttpCache\CacheProvider();
+};
 
 // Override notFoundHandler (404):
 $container['notFoundHandler'] = function ($container) {

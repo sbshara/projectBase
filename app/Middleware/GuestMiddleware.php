@@ -22,7 +22,7 @@ class GuestMiddleware extends Middleware {
         if ($this->container->auth->check()) {
             $this->container->flash->addMessage('error', 'You\'re already logged in.');
             // TODO: if we have the referrer url, it's better to redirect the user to the referrer after signing in
-            return $response->withRedirect($this->container->router->pathFor('auth.SignIn'));
+            return $response->withRedirect($this->container->router->pathFor('private.home'));
         }
         $response = $next($request, $response);
         return $response;
