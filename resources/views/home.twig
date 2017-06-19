@@ -6,7 +6,22 @@
 {% block title %}HOME{% endblock %}
 
 {% block contents %}
-    This is home page <br/>
+
+    <br/>
+    <br/>
+    This is Private Home Page<br/>
+
+    {{ auth.user.companyShort() | raw }}
+    <br/>
+    {{ auth.user.companyLong() | raw }}
+    <br/>
+    Company Country: {{ auth.user.Company().CompanyCountry().cntry_name_long }}
+    <br/>
+    Flag: <img src="{{ base_url() ~ auth.user.Company().CompanyCountry().cntry_flag | raw }}" width="20px" height="20px">
+    <br/>
+    Company State: {{ auth.user.Company().CompanyState().state_name }}
+    <br/>
+    Company City: {{ auth.user.Company().CompanyCity().city_name }}
 {% endblock %}
 
 
