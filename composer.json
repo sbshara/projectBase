@@ -1,8 +1,8 @@
 {
-    "name": "authentication app",
+    "name": "Project Base",
     "type": "project",
-    "description": "did ",
-    "version": "1.0",
+    "description": "",
+    "version": "1.0.9",
     "keywords": [
         "authentication",
         "slim-3",
@@ -11,7 +11,7 @@
         "twig",
         "Illuminate"
     ],
-    "homepage": "https://github.com/sbshara/authentication",
+    "homepage": "https://github.com/sbshara/projectBase",
     "license": "MIT",
     "authors": [
         {
@@ -27,21 +27,18 @@
 
     "require": {
         "php": ">=5.6",
-        "slim/slim": "^3.8",
-        "slim/twig-view": "^2.2",
-        "slim/csrf": "^0.8",
-        "slim/flash": "^0.2",
-
-        "hassankhan/config": "^0.10",
-        "illuminate/database": "^5.4",
-        "phpmailer/phpmailer": "^5.2",
-
-        "ircmaxell/random-lib": "^1.2",
-        "respect/validation": "^1.1",
-
-
         "alexgarrett/violin": "^2.2",
         "google/recaptcha": "^1.1",
+        "hassankhan/config": "^0.10",
+        "illuminate/database": "^5.4",
+        "ircmaxell/random-lib": "^1.2",
+        "phpmailer/phpmailer": "^5.2",
+        "respect/validation": "^1.1",
+        "slim/csrf": "^0.8",
+        "slim/flash": "^0.2",
+        "slim/http-cache": "^0.3.0",
+        "slim/slim": "^3.8",
+        "slim/twig-view": "^2.2",
         "symfony/console": "^3.2",
         "vlucas/phpdotenv": "^2.4"
     },
