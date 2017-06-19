@@ -1,0 +1,28 @@
+{% spaceless %}
+<footer class="main-footer">
+    <div class="pull-right hidden-xs">
+        <b>Version</b> 1.0.9
+    </div>
+    <strong>Copyright &copy; {{ "now" | date("Y") }} <a href="https://bshara.com">BSHARA</a>.</strong> All rights
+    reserved.
+</footer>
+{% include 'templates/partials/rightnav.twig' %}
+<!-- Add the sidebar's background. This div must be placed
+     immediately after the control sidebar -->
+<div class="control-sidebar-bg"></div>
+</div>
+<!-- ./wrapper -->
+
+<!-- jQuery 2.2.4 -->
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<!-- Bootstrap 3.3.7 -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<!-- SlimScroll -->
+<script src="{{ base_url() }}/plugins/slimScroll/jquery.slimscroll.min.js"></script>
+<!-- FastClick -->
+<script src="{{ base_url() }}/plugins/fastclick/fastclick.js"></script>
+<!-- AdminLTE App -->
+<script src="{{ base_url() }}/js/app.min.js"></script>
+<!-- AdminLTE for demo purposes -->
+<script src="{{ base_url() }}/js/demo.js"></script>
+{% endspaceless %}
