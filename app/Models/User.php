@@ -16,6 +16,7 @@ class User extends Model {
     public $table = 'users';
     public $fillable = [
         'id',
+        'company_id',
         'first_name',
         'last_name',
         'email',
@@ -46,9 +47,26 @@ class User extends Model {
         ]);
     }
 
+    public function Company () {
+        return Company::find($this->company_id);
+    }
 
-
-
+    public function companyShort () {
+        return
+            '<b>' .
+            substr($this->Company()->name_short, 0, 1) .
+            '</b>' .
+            substr($this->Company()->name_short, 1);
+    }
+    public function companyLong () {
+        return
+            '<b>' .
+            substr($this->Company()->name_full, 0,
+                strpos($this->Company()->name_full, ' ')) .
+            '</b>' .
+            ' ' .
+            substr($this->Company()->name_full, (strpos($this->Company()->name_full,' ') + 1));
+    }
 
 
 
