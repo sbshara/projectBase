@@ -1,8 +1,8 @@
-.idea/*
-._*
-.DS*
+.idea/
+._
+.DS
 composer.lock
-vendor/*
-cache/*
-Config/*
+vendor/
+cache/
+Config/
 scrap.php
